@@ -1,0 +1,130 @@
+//
+//  LSSingleDoubleCell.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/31.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSSingleDoubleCell.h"
+#import "LSAnalyse.h"
+
+@interface LSSingleDoubleCell ()
+
+
+@property (weak, nonatomic) IBOutlet UILabel *t_01;
+@property (weak, nonatomic) IBOutlet UILabel *t_23;
+@property (weak, nonatomic) IBOutlet UILabel *t_46;
+@property (weak, nonatomic) IBOutlet UILabel *t_7;
+@property (weak, nonatomic) IBOutlet UILabel *t_d;
+@property (weak, nonatomic) IBOutlet UILabel *t_s;
+
+@property (weak, nonatomic) IBOutlet UILabel *h_01;
+@property (weak, nonatomic) IBOutlet UILabel *h_23;
+@property (weak, nonatomic) IBOutlet UILabel *h_46;
+@property (weak, nonatomic) IBOutlet UILabel *h_7;
+@property (weak, nonatomic) IBOutlet UILabel *h_d;
+@property (weak, nonatomic) IBOutlet UILabel *h_s;
+
+@property (weak, nonatomic) IBOutlet UILabel *c_01;
+@property (weak, nonatomic) IBOutlet UILabel *c_23;
+@property (weak, nonatomic) IBOutlet UILabel *c_46;
+@property (weak, nonatomic) IBOutlet UILabel *c_7;
+@property (weak, nonatomic) IBOutlet UILabel *c_d;
+@property (weak, nonatomic) IBOutlet UILabel *c_s;
+
+
+@property (weak, nonatomic) IBOutlet UILabel *totalGoals;
+@property (weak, nonatomic) IBOutlet UILabel *singleDouble;
+@property (weak, nonatomic) IBOutlet UILabel *other;
+@property (weak, nonatomic) IBOutlet UILabel *single;
+@property (weak, nonatomic) IBOutlet UILabel *doubl;
+@property (weak, nonatomic) IBOutlet UILabel *total;
+@property (weak, nonatomic) IBOutlet UILabel *home;
+@property (weak, nonatomic) IBOutlet UILabel *away;
+
+
+@end
+
+@implementation LSSingleDoubleCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    _totalGoals.text = NSLocalizedStringFromTable(@"Total Goals", @"InfoPlist", nil);
+    _total.text = NSLocalizedStringFromTable(@"Total", @"InfoPlist", nil);
+    _singleDouble.text = NSLocalizedStringFromTable(@"Single/Double goals", @"InfoPlist", nil);
+    _other.text = NSLocalizedStringFromTable(@"Others", @"InfoPlist", nil);
+    _single.text = NSLocalizedStringFromTable(@"Single", @"InfoPlist", nil);
+    _doubl.text = NSLocalizedStringFromTable(@"Double", @"InfoPlist", nil);
+    _home.text = NSLocalizedStringFromTable(@"Home", @"InfoPlist", nil);
+    _away.text = NSLocalizedStringFromTable(@"Away", @"InfoPlist", nil);
+    
+    // Initialization code
+}
+
+- (void)setOh:(O_H *)oh {
+    _oh = oh;
+    _t_01.text = [NSString stringWithFormat:@"%li",(long)oh.t_01];
+    _t_23.text = [NSString stringWithFormat:@"%li",(long)oh.t_23];
+    _t_46.text = [NSString stringWithFormat:@"%li",(long)oh.t_46];
+    _t_7.text = [NSString stringWithFormat:@"%li",(long)oh.t_7];
+    _t_d.text = [NSString stringWithFormat:@"%li",(long)oh.t_d];
+    _t_s.text = [NSString stringWithFormat:@"%li",(long)oh.t_s];
+    
+    _h_01.text = [NSString stringWithFormat:@"%li",(long)oh.h_01];
+    _h_23.text = [NSString stringWithFormat:@"%li",(long)oh.h_23];
+    _h_46.text = [NSString stringWithFormat:@"%li",(long)oh.h_46];
+    _h_7.text = [NSString stringWithFormat:@"%li",(long)oh.h_7];
+    _h_d.text = [NSString stringWithFormat:@"%li",(long)oh.h_d];
+    _h_s.text = [NSString stringWithFormat:@"%li",(long)oh.h_s];
+    
+    _c_01.text = [NSString stringWithFormat:@"%li",(long)oh.c_01];
+    _c_23.text = [NSString stringWithFormat:@"%li",(long)oh.c_23];
+    _c_46.text = [NSString stringWithFormat:@"%li",(long)oh.c_46];
+    _c_7.text = [NSString stringWithFormat:@"%li",(long)oh.c_7];
+    _c_d.text = [NSString stringWithFormat:@"%li",(long)oh.c_d];
+    _c_s.text = [NSString stringWithFormat:@"%li",(long)oh.c_s];
+}
+
+- (void)setOc:(O_H *)oc {
+    _oc = oc;
+    _t_01.text = [NSString stringWithFormat:@"%li",(long)oc.t_01];
+    _t_23.text = [NSString stringWithFormat:@"%li",(long)oc.t_23];
+    _t_46.text = [NSString stringWithFormat:@"%li",(long)oc.t_46];
+    _t_7.text = [NSString stringWithFormat:@"%li",(long)oc.t_7];
+    _t_d.text = [NSString stringWithFormat:@"%li",(long)oc.t_d];
+    _t_s.text = [NSString stringWithFormat:@"%li",(long)oc.t_s];
+    
+    _h_01.text = [NSString stringWithFormat:@"%li",(long)oc.h_01];
+    _h_23.text = [NSString stringWithFormat:@"%li",(long)oc.h_23];
+    _h_46.text = [NSString stringWithFormat:@"%li",(long)oc.h_46];
+    _h_7.text = [NSString stringWithFormat:@"%li",(long)oc.h_7];
+    _h_d.text = [NSString stringWithFormat:@"%li",(long)oc.h_d];
+    _h_s.text = [NSString stringWithFormat:@"%li",(long)oc.h_s];
+    
+    _c_01.text = [NSString stringWithFormat:@"%li",(long)oc.c_01];
+    _c_23.text = [NSString stringWithFormat:@"%li",(long)oc.c_23];
+    _c_46.text = [NSString stringWithFormat:@"%li",(long)oc.c_46];
+    _c_7.text = [NSString stringWithFormat:@"%li",(long)oc.c_7];
+    _c_d.text = [NSString stringWithFormat:@"%li",(long)oc.c_d];
+    _c_s.text = [NSString stringWithFormat:@"%li",(long)oc.c_s];
+}
+
++ (instancetype)cellWithTableView:(UITableView *)tableView
+{
+    static NSString *ID = @"singleDoubleCell";
+    id cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    
+    if (cell == nil) {
+        cell = [[self alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+    }
+    return cell;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

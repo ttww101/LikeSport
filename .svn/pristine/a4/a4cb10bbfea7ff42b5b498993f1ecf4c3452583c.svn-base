@@ -1,0 +1,19 @@
+//
+//  LSMoreResult.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/14.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSMoreResult.h"
+#import "LSMore.h"
+@implementation LSMoreResult
++ (NSDictionary *)mj_objectClassInArray {
+    return @{@"result":[LSMore class]};
+}
+
+
+@end
+
+

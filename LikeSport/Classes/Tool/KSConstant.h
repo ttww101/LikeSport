@@ -1,0 +1,24 @@
+//
+//  KSConstant.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/17.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+UIKIT_EXTERN NSString * const webUrl;
+UIKIT_EXTERN NSString * const apiUrl;
+UIKIT_EXTERN NSString * const appUrl;
+UIKIT_EXTERN NSInteger const appID;
+UIKIT_EXTERN NSString * const mac_token;
+
+@interface KSConstant : NSObject
+- (NSString *)getState:(NSString *)state;
+//- (NSString *)getStateWithIndex:(NSInteger)index;
+- (NSString *)getBasketballState:(NSString *)state;
+- (NSString *)getTinnisState:(NSString *)state;
+
+- (NSString *)getLetterWithNumber:(NSInteger)number;
+@end

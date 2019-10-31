@@ -1,0 +1,478 @@
+//
+//  LSAnalyse.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/20.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@class AnalyseResult,X_Score,O_H,A_H,I_H,Score_Full,N_H,Pk_Data;
+@interface LSAnalyse : NSObject
+
+@property (nonatomic, assign) NSInteger ret_code;
+
+@property (nonatomic, copy) NSString *err_msg;
+
+@property (nonatomic, strong) AnalyseResult *result;
+
+//@property (nonatomic, strong) NSArray<Pk_Data *> *teamResult; // 球队相关联赛
+
+@end
+
+@interface TeamStageResult : NSObject
+
+@property (nonatomic, assign) NSInteger ret_code;
+
+@property (nonatomic, copy) NSString *err_msg;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *result; // 球队相关联赛
+
+
+@end
+
+@interface AnalyseResult : NSObject
+
+
+@property (nonatomic, strong) NSArray<X_Score *> *x_score;
+
+
+@property (nonatomic, copy) NSString *momenttype;
+
+@property (nonatomic, assign) NSInteger cteam_id;
+
+@property (nonatomic, strong) O_H *O_h;
+
+@property (nonatomic, strong) O_H *O_c;
+
+
+@property (nonatomic, strong) A_H *A_c;
+
+@property (nonatomic, strong) A_H *A_h;
+
+
+
+
+@property (nonatomic, copy) NSString *groupname;
+
+@property (nonatomic, assign) NSInteger stageid;
+
+@property (nonatomic, strong) Score_Full *score_full_c;
+
+@property (nonatomic, strong) Score_Full *score_half_c;
+
+
+
+@property (nonatomic, copy) NSString *doreport;
+
+@property (nonatomic, copy) NSString *reporttype;
+
+@property (nonatomic, strong) N_H *N_h;
+
+@property (nonatomic, strong) N_H *N_c;
+
+@property (nonatomic, assign) NSInteger group;
+
+
+@property (nonatomic, copy) NSString *hteamname;
+
+@property (nonatomic, strong) I_H *I_c;
+
+@property (nonatomic, copy) NSString *cteamname;
+
+@property (nonatomic, strong) I_H *I_h;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *pk_data;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *c_result_data;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *h_result_data;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *h_fixtures_data;
+
+@property (nonatomic, strong) NSArray<Pk_Data *> *c_fixtures_data;
+
+@property (nonatomic, strong) Score_Full *score_half_h;
+
+@property (nonatomic, strong) Score_Full *score_full_h;
+
+@property (nonatomic, assign) NSInteger hteam_id;
+
+
+
+
+@end
+
+
+
+@interface O_H : NSObject
+
+@property (nonatomic, assign) NSInteger h_23;
+
+@property (nonatomic, assign) NSInteger t_s;
+
+@property (nonatomic, assign) NSInteger h_d;
+
+@property (nonatomic, assign) NSInteger h_46;
+
+@property (nonatomic, assign) NSInteger t_d;
+
+@property (nonatomic, assign) NSInteger c_01;
+
+@property (nonatomic, assign) NSInteger t_01;
+
+@property (nonatomic, assign) NSInteger c_7;
+
+@property (nonatomic, assign) NSInteger h_7;
+
+@property (nonatomic, assign) NSInteger c_23;
+
+@property (nonatomic, assign) NSInteger t_7;
+
+@property (nonatomic, assign) NSInteger h_01;
+
+@property (nonatomic, assign) NSInteger t_23;
+
+@property (nonatomic, assign) NSInteger c_46;
+
+@property (nonatomic, assign) NSInteger c_d;
+
+@property (nonatomic, assign) NSInteger t_46;
+
+@property (nonatomic, assign) NSInteger c_s;
+
+@property (nonatomic, assign) NSInteger h_s;
+
+@end
+
+
+
+@interface A_H : NSObject
+
+@property (nonatomic, assign) NSInteger c_enter5;
+
+@property (nonatomic, assign) NSInteger t_enter5;
+
+@property (nonatomic, assign) NSInteger h_enter5;
+
+@property (nonatomic, assign) NSInteger t_enter0;
+
+@property (nonatomic, assign) NSInteger c_enter0;
+
+@property (nonatomic, assign) NSInteger h_enter0;
+
+@property (nonatomic, assign) NSInteger c_enter1;
+
+@property (nonatomic, assign) NSInteger t_enter1;
+
+@property (nonatomic, assign) NSInteger h_enter1;
+
+@property (nonatomic, assign) NSInteger c_enter2;
+
+@property (nonatomic, assign) NSInteger t_enter2;
+
+@property (nonatomic, assign) NSInteger h_enter2;
+
+@property (nonatomic, assign) NSInteger c_enter3;
+
+@property (nonatomic, assign) NSInteger t_enter3;
+
+@property (nonatomic, assign) NSInteger h_enter3;
+
+@property (nonatomic, assign) NSInteger c_enter4;
+
+@property (nonatomic, assign) NSInteger t_enter4;
+
+@property (nonatomic, assign) NSInteger h_enter4;
+
+@end
+
+
+@interface I_H : NSObject
+
+@property (nonatomic, assign) NSInteger c_dd;
+
+@property (nonatomic, assign) NSInteger h_wd;
+
+@property (nonatomic, assign) NSInteger h_ll;
+
+@property (nonatomic, assign) NSInteger t_dl;
+
+@property (nonatomic, assign) NSInteger h_dw;
+
+@property (nonatomic, assign) NSInteger t_lw;
+
+@property (nonatomic, assign) NSInteger c_dl;
+
+@property (nonatomic, assign) NSInteger h_wl;
+
+@property (nonatomic, assign) NSInteger h_dd;
+
+@property (nonatomic, assign) NSInteger t_ld;
+
+@property (nonatomic, assign) NSInteger c_lw;
+
+@property (nonatomic, assign) NSInteger t_ww;
+
+@property (nonatomic, assign) NSInteger c_ld;
+
+@property (nonatomic, assign) NSInteger c_ww;
+
+@property (nonatomic, assign) NSInteger t_wd;
+
+@property (nonatomic, assign) NSInteger c_wd;
+
+@property (nonatomic, assign) NSInteger h_dl;
+
+@property (nonatomic, assign) NSInteger t_ll;
+
+@property (nonatomic, assign) NSInteger h_lw;
+
+@property (nonatomic, assign) NSInteger t_dw;
+
+@property (nonatomic, assign) NSInteger c_ll;
+
+@property (nonatomic, assign) NSInteger h_ld;
+
+@property (nonatomic, assign) NSInteger t_wl;
+
+@property (nonatomic, assign) NSInteger t_dd;
+
+@property (nonatomic, assign) NSInteger h_ww;
+
+@property (nonatomic, assign) NSInteger c_wl;
+
+@property (nonatomic, assign) NSInteger c_dw;
+
+@end
+
+@interface X_Score : NSObject
+
+@property (nonatomic, copy) NSString *position;
+
+@property (nonatomic, copy) NSString *teamname;
+
+@property (nonatomic, assign) NSInteger t_match;
+
+@property (nonatomic, assign) NSInteger t_win;
+
+@property (nonatomic, assign) NSInteger t_draw;
+
+@property (nonatomic, assign) NSInteger t_loss;
+
+@property (nonatomic, assign) NSInteger t_entergoals;
+
+@property (nonatomic, assign) NSInteger t_missgoals;
+
+@property (nonatomic, assign) NSInteger t_jinsheng;
+
+@property (nonatomic, assign) NSInteger Integral;
+
+@property (nonatomic, copy) NSString *zgtxt;
+
+@end
+
+@interface Score_Full : NSObject
+
+@property (nonatomic, assign) NSInteger j6_loss;
+
+@property (nonatomic, assign) NSInteger j6_entergoals;
+
+@property (nonatomic, assign) NSInteger j6_Integral;
+
+@property (nonatomic, assign) NSInteger h_entergoals;
+
+@property (nonatomic, assign) NSInteger j6_match;
+
+@property (nonatomic, assign) NSInteger c_pm;
+
+@property (nonatomic, assign) NSInteger h_win;
+
+@property (nonatomic, assign) NSInteger h_jingsheng;
+
+@property (nonatomic, assign) NSInteger c_match;
+
+@property (nonatomic, assign) NSInteger t_jinsheng;
+
+@property (nonatomic, assign) NSInteger c_win;
+
+@property (nonatomic, assign) NSInteger t_draw;
+
+@property (nonatomic, copy) NSString *j6_sl;
+
+@property (nonatomic, assign) NSInteger t_loss;
+
+@property (nonatomic, assign) NSInteger c_Integral;
+
+@property (nonatomic, assign) NSInteger t_entergoals;
+
+@property (nonatomic, copy) NSString *h_sl;
+
+@property (nonatomic, assign) NSInteger t_match;
+
+@property (nonatomic, copy) NSString *t_sl;
+
+@property (nonatomic, assign) NSInteger j6_win;
+
+@property (nonatomic, assign) NSInteger j6_pm;
+
+@property (nonatomic, assign) NSInteger j6_draw;
+
+@property (nonatomic, assign) NSInteger c_missgoals;
+
+@property (nonatomic, copy) NSString *c_sl;
+
+@property (nonatomic, assign) NSInteger j6_missgoals;
+
+@property (nonatomic, assign) NSInteger c_draw;
+
+@property (nonatomic, assign) NSInteger c_loss;
+
+@property (nonatomic, assign) NSInteger t_win;
+
+@property (nonatomic, assign) NSInteger c_entergoals;
+
+@property (nonatomic, assign) NSInteger t_Integral;
+
+@property (nonatomic, assign) NSInteger j6_jingsheng;
+
+@property (nonatomic, assign) NSInteger h_Integral;
+
+@property (nonatomic, assign) NSInteger h_match;
+
+@property (nonatomic, assign) NSInteger t_missgoals;
+
+@property (nonatomic, assign) NSInteger h_missgoals;
+
+@property (nonatomic, assign) NSInteger c_jingsheng;
+
+@property (nonatomic, assign) NSInteger h_pm;
+
+@property (nonatomic, assign) NSInteger h_draw;
+
+@property (nonatomic, assign) NSInteger t_pm;
+
+@property (nonatomic, assign) NSInteger h_loss;
+
+@end
+
+@interface N_H : NSObject
+
+@property (nonatomic, copy) NSString *h_x;
+
+@property (nonatomic, copy) NSString *t_s;
+
+@property (nonatomic, copy) NSString *c_x;
+
+@property (nonatomic, copy) NSString *h_s;
+
+@property (nonatomic, copy) NSString *t_x;
+
+@property (nonatomic, copy) NSString *c_s;
+
+@end
+
+
+@interface Pk_Data : NSObject
+@property (nonatomic, assign) BOOL isTeamInfo;
+
+@property (nonatomic, assign) BOOL isPkData;
+
+@property (nonatomic, assign) BOOL isFixturesData;
+@property (nonatomic, assign) NSInteger hteamid;
+@property (nonatomic, assign) NSInteger cteamid;
+@property (nonatomic, assign) BOOL isHteam;
+
+@property (nonatomic, copy) NSString *momenttype;
+
+@property (nonatomic, copy) NSString *momentname; // 阶段名
+
+@property (nonatomic, copy) NSString *stagename;
+
+@property (nonatomic, assign) NSInteger cteam_id;
+
+@property (nonatomic, copy) NSString *state;
+
+@property (nonatomic, assign) NSInteger half_c;
+
+@property (nonatomic, copy) NSString *handicaprate;
+
+@property (nonatomic, copy) NSString *hteamname;
+
+@property (nonatomic, copy) NSString *neutralgreen;
+
+@property (nonatomic, assign) NSInteger penalty_c;
+
+@property (nonatomic, copy) NSString *cteamname;
+
+@property (nonatomic, copy) NSString *wintype;
+
+@property (nonatomic, copy) NSString *resultbs;
+
+@property (nonatomic, assign) NSInteger penalty_h;
+
+@property (nonatomic, assign) NSInteger stage_id;
+
+@property (nonatomic, copy) NSString *isrun;
+
+@property (nonatomic, assign) NSInteger extratime_c;
+
+@property (nonatomic, assign) NSInteger rcard_c;
+
+@property (nonatomic, assign) NSInteger match_id;
+
+@property (nonatomic, assign) NSInteger full_h;
+
+@property (nonatomic, assign) NSInteger owngoal_c;
+
+@property (nonatomic, assign) NSInteger rcard_h;
+
+@property (nonatomic, assign) NSInteger moment_id;
+
+@property (nonatomic, copy) NSString *ddypl;
+
+@property (nonatomic, copy) NSString *hasextratime;
+
+@property (nonatomic, assign) NSInteger starttime;
+
+@property (nonatomic, assign) NSInteger group;
+
+@property (nonatomic, assign) NSInteger half_h;
+
+@property (nonatomic, assign) NSInteger extratime_h;
+
+@property (nonatomic, assign) NSInteger owngoal_h;
+
+@property (nonatomic, copy) NSString *hpl;
+
+@property (nonatomic, copy) NSString *cpl;
+
+@property (nonatomic, copy) NSString *pkbs;
+
+@property (nonatomic, copy) NSString *hdypl;
+
+@property (nonatomic, assign) NSInteger hteam_id;
+
+@property (nonatomic, copy) NSString *hbspl;
+
+@property (nonatomic, copy) NSString *cbspl;
+
+@property (nonatomic, assign) NSInteger matchtype_id;
+
+@property (nonatomic, copy) NSString *wintag;
+
+@property (nonatomic, copy) NSString *haspenalty;
+
+@property (nonatomic, copy) NSString *teamtag;
+
+@property (nonatomic, copy) NSString *cdypl;
+
+@property (nonatomic, copy) NSString *matchtypefullname;
+
+@property (nonatomic, assign) NSInteger round;
+
+@property (nonatomic, assign) NSInteger full_c;
+
+@end
+

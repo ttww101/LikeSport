@@ -1,0 +1,32 @@
+PODS:
+  - "AGColor+Objc (0.0.1)"
+  - AGIntroduceViewController-Objc (0.0.1)
+  - FSPagerView (0.8.3)
+  - Masonry (1.1.0)
+  - MBProgressHUD (0.9.2)
+
+DEPENDENCIES:
+  - "AGColor+Objc"
+  - AGIntroduceViewController-Objc
+  - FSPagerView
+  - Masonry
+  - MBProgressHUD (~> 0.9.1)
+
+SPEC REPOS:
+  https://cdn.cocoapods.org/:
+    - "AGColor+Objc"
+    - AGIntroduceViewController-Objc
+    - FSPagerView
+    - Masonry
+    - MBProgressHUD
+
+SPEC CHECKSUMS:
+  "AGColor+Objc": afec83a37c148049e76e9e4382a5b2e56ff79619
+  AGIntroduceViewController-Objc: 4ceebe8e58fbc76e7d1c58ddd05ae05646150ae0
+  FSPagerView: 670405b2f18e2a87fa37f20b00de783e562c25a8
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+
+PODFILE CHECKSUM: ee091dce26b74019b58da79502dfa723dcbb4df1
+
+COCOAPODS: 1.8.3

@@ -1,0 +1,145 @@
+//
+//  TipsViewController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 2016/11/3.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "TipsViewController.h"
+
+@interface TipsViewController ()
+
+@end
+
+@implementation TipsViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    /**
+     点亮赛事右侧的⭐️，相应的赛事就在“我的关注”集结展示，同时系统将即时比分及时推送给您，在手机处于待机状态下依然能实时获得最新比分。
+     如果你拥有一个like体育账户，在点亮❤️关注赛事类别或球队之后，与其相关联的赛事于比赛日当天，自动点亮赛事的⭐️并展示在“我的关注”。
+     Light up ⭐️on the right side of the match. Then this match will saved to "my focus"，and the live score of the focused matches will push to your phone real time even your phone is in standby mode.
+     If you are already Likesport register, after you light up ❤️ to focused a tournament or a team, the system will automatically light up ⭐️of the relevant matches and display them in "my focus" on the match day.
+     */
+    [self setupTextView];
+//    [self loadMyWebView];
+}
+
+- (void)setupTextView
+{
+    // 富文本技术：
+    // 1.图文混排
+    // 2.随意修改文字样式
+    //    self.textView.text = @"哈哈4365746875";
+    //    self.textView.textColor = [UIColor blueColor];
+//    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:@"哈哈123456"];
+//    // 设置“哈哈”为蓝色
+//    [string addAttribute:NSForegroundColorAttributeName value:[UIColor blueColor] range:NSMakeRange(0, 2)];
+//    [string addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:30] range:NSMakeRange(0, 2)];
+//    [string addAttribute:NSBackgroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, 2)];
+//    
+//    // 设置“456”为红色
+//    [string addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(6, 2)];
+//    [string addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:24] range:NSMakeRange(6, 2)];
+//    [string addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:NSMakeRange(6, 2)];
+//    
+//    // 创建图片图片附件
+//    NSTextAttachment *attach = [[NSTextAttachment alloc] init];
+//    attach.image = [UIImage imageNamed:@"starred"];
+//    attach.bounds = CGRectMake(0, 0, 15, 15);
+//    NSAttributedString *attachString = [NSAttributedString attributedStringWithAttachment:attach];
+//    
+//    
+//    [string appendAttributedString:attachString];
+//    
+//    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"789"]];
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"text1", @"InfoPlist", nil)];
+    
+    // 创建图片图片附件
+    NSTextAttachment *star = [[NSTextAttachment alloc] init];
+    star.image = [UIImage imageNamed:@"starred"];
+    star.bounds = CGRectMake(0, 0, 18, 18);
+    NSAttributedString *starString = [NSAttributedString attributedStringWithAttachment:star];
+    
+    [string appendAttributedString:starString];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"text2", @"InfoPlist", nil)]];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"text3", @"InfoPlist", nil)]];
+
+    NSTextAttachment *follow = [[NSTextAttachment alloc] init];
+    follow.image = [UIImage imageNamed:@"followed"];
+    follow.bounds = CGRectMake(0, 0, 18, 18);
+    NSAttributedString *followString = [NSAttributedString attributedStringWithAttachment:follow];
+    [string appendAttributedString:followString];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"text4", @"InfoPlist", nil)]];
+    [string appendAttributedString:starString];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"text5", @"InfoPlist", nil)]];
+
+    [string addAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:20]} range:NSMakeRange(0,string.length)];
+    
+    
+    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(5, 5, kSceenWidth-10, kSceenHeight-64)];
+    textView.attributedText = string;
+    textView.scrollEnabled = NO;
+    textView.editable = NO;
+    [self.view addSubview:textView];
+//    self.textView.attributedText = string;
+    
+    /**
+     iOS 6之前：CoreText,纯C语言,极其蛋疼
+     iOS 6开始：NSAttributedString,简单易用
+     iOS 7开始：TextKit,功能强大,简单易用
+     */
+}
+
+- (float) heightForString:(UITextView *)textView andWidth:(float)width{
+    CGSize sizeToFit = [textView sizeThatFits:CGSizeMake(width, MAXFLOAT)];
+    return sizeToFit.height;
+}
+
+
+-(void) loadMyWebView{
+    NSString *title=@"韩寒《后会无期》奇葩的吸金3秘籍";
+    
+    NSString *linkStr=[NSString stringWithFormat:@"<a href='%@'>我的博客</a> <a href='%@'>原文</a>",@"http://blog.csdn.net/wildcatlele",@"http://jincuodao.baijia.baidu.com/article/26059"];
+    
+    NSString *p1=@"韩寒《后会无期》的吸金能力很让我惊讶！8月12日影片票房已成功冲破6亿大关。而且排片量仍保持10 以上，以日收千万的速度稳步向七亿进军。";
+    
+    NSString *p2=@"要知道，《后会无期》不是主流类型片，是一个文艺片。不像《小时代》，是一个商业主流的偶像电影。";
+    NSString *image1=[NSString stringWithFormat:@"<img src='%@'  height='280' width='300' />",@"http://nvren.so/uploads/allimg/c140801/140DR4554L40-YB9.jpg"];
+    NSString *image2=[NSString stringWithFormat:@"<img src='%@'  height='280' width='300' />",@"http://f.hiphotos.baidu.com/news/w%3D638/sign=78315beeb1fb43161a1f797918a44642/2934349b033b5bb58cb61bdb35d3d539b600bcb5.jpg"];
+    
+    NSString *p3=@"太奇葩了！有人说，这是中国电影市场的红利，是粉丝电影的成功。但是，有一部投资3000万的粉丝电影《我就是我》，有明星，制作也不错，基本上是惨败。";
+    
+    NSString *p4=@"《后会无期》卖的不是好故事，是优越感。特别是针对80、90后的人群，你有没有发现，看《后会无期》比看《小时代3》有明显的优越感。故事虽然一般，但是很多人看完后，会在微博、微信上晒照片。所以说，对一个族群靠的不是广度，而是深度。<br>\
+    \
+    很凶残，值得大家借鉴。韩寒《后会无期》还有什么秘密武器，欢迎《后会无期》团队或相关方爆料，直接留言即可，有料的可以送黎万强亲笔签名的《参与感》一书。";
+    
+    //初始化和html字符串
+    NSString *htmlURlStr=[NSString stringWithFormat:@"<body style='background-color:#EBEBF3'><h2>%@</h2><p>%@</p> <p>%@ </p>%@ <br><p> %@</p> <p>%@</p>%@<p>%@</p></body>",title,linkStr,p1,image1,p2,p3,image2,p4];
+    
+    UIWebView *webView = [[UIWebView alloc]initWithFrame:CGRectMake(5, 5, kSceenWidth-10, kSceenHeight-70)];
+    [webView loadHTMLString:htmlURlStr baseURL:nil];
+    [self.view addSubview:webView];
+//    [self.myWebView loadHTMLString:htmlURlStr baseURL:nil];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

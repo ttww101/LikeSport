@@ -1,0 +1,670 @@
+//
+//  LSLikeSportTool.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/7.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSLikeSportTool.h"
+#import "LSLastestParamResult.h"
+#import "LSMoreResult.h"
+#import "LSLive.h"
+#import "MJExtension.h"
+#import "LSFootballDetail.h"
+#import "LSFootballBase.h"
+#import "LSConstant.h"
+#import "LSHttpTool.h"
+#import <CommonCrypto/CommonDigest.h>
+
+@implementation LSLikeSportTool
+
++ (void)getLiveWithType:(NSInteger)type ofState:(NSString *)state withMatchID:(NSInteger)matchID WithCompleted:(Completed)completed failure:(Failure)failure
+{
+    //实例化一个NSDateFormatter对象
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    //设定时间格式,这里可以设置成自己需要的格式
+    [dateFormatter setDateFormat:@"zzz"];
+    //用[NSDate date]可以获取系统当前时间
+    NSString *currentDateStr = [[dateFormatter stringFromDate:[NSDate date]] stringByReplacingOccurrencesOfString:@"GMT" withString:@""];
+    NSString *sign = [currentDateStr substringWithRange:NSMakeRange(0, 1)];
+    NSString *number = [currentDateStr substringFromIndex:1];
+    NSMutableArray *match = [[number componentsSeparatedByString:@":"] mutableCopy];
+    NSString *timeZone;
+    
+    if (match.count == 2) {
+        timeZone = [NSString stringWithFormat:@"%@%@.%li",sign,match[0],[match[1] integerValue]/60];
+    } else if (match.count == 1){
+        timeZone = currentDateStr;
+    }
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_json_get?MType=%li&MState=%@&T_FlagNum=%li&gmt=%@",appUrl,(long)type,state,(long)matchID,timeZone];
+    
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"即时比分请求出错");
+    }];
+}
+
++ (void)getLiveMoreMatchID:(NSInteger)matchID WithCompleted:(Completed)completed failure:(Failure)failure{
+
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/ft_match_jq_player_get?mid=%li",appUrl,(long)matchID];
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+//        NSString *matchid = [responseObject objectForKey:@"result"];
+//        !completed ? : completed(matchid);
+        // 当日的比赛 列表不需要缓存
+        LSMoreResult *last = [LSMoreResult mj_objectWithKeyValues:responseObject];
+//        if (last.ret_code == 0) {
+            !completed ? : completed(last.result);
+//        }
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"请求进球队员出错");
+    }];
+    
+}
++ (void)getBasketballAndTennisLiveWithType:(NSInteger)type withFlagNum:(NSInteger)flayNum withCompleted:(Completed)completed failure:(Failure)failure{
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/change_json_get?mtype=%ld&flag_num=%li",appUrl,(long)type,(long)flayNum];
+
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+
+    }];
+}
+
+// 足球详情
++ (void)getFootballDetailWithMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure
+{
+
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_info_get?mid=%li",appUrl,(long)matchID];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+//        NSLog(@"result%@",responseObject);
+        // 当日的比赛 列表不需要缓存
+        LSFootballDetail *footballDetail = [LSFootballDetail mj_objectWithKeyValues:responseObject];
+        
+        
+        !completed ? : completed(footballDetail.result);
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"足球详情请求网络出错");
+    }];
+}
+
+// 足球基本信息
++ (void)getFootballBaseType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure
+{
+
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_info_base_get?mid=%li&mtype=%li",appUrl,(long)matchID,(long)type];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        // 当日的比赛 列表不需要缓存
+        !completed ? : completed(responseObject);
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+
+        NSLog(@"足球基本信息请求网络出错");
+    }];
+}
+
++ (void)forceMatchWithState:(NSInteger)state Type:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure
+{
+//    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_follow_set?mid=%i&token=%@&app_id=%i",appUrl,matchID,token,appID];
+//    NSLog(@"链接%@",url);
+//    [LSHttpTool POSTWithURL:url params:nil success:^(id responseObject) {
+//        NSLog(@"%@",responseObject);
+//    } failure:^(NSError *error) {
+////        NSLog(@"error=%@",error);
+//    }];
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_follow_set?mid=%li&mtype=%li&state=%li",appUrl,(long)matchID,(long)type,(long)state];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+    
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+    }];
+
+}
+
+// 足球分析
++ (void)getAnalyseType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure
+{
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_pk_get?mid=%li&mtype=%li",appUrl,(long)matchID,(long)type];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"对阵分析请求网络出错");
+    }];
+
+}
+
+
+// 筛选
++ (void)getChooseType:(NSInteger)type withMDay:(NSString *)MDay withCompleted:(Completed)completed failure:(Failure)failure {
+    
+    NSString *timeZone = [self getGMT:MDay];
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_filter_json_get?MType=%li&MDay=%@&gmt=%@",appUrl,(long)type,MDay,timeZone];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"筛选请求网络出错");
+    }];
+
+}
+
+// 赛程赛果
++ (void)getMatchWithType:(NSInteger)type ofState:(NSString *)state withMDay:(NSString *)MDay WithCompleted:(Completed)completed failure:(Failure)failure
+{
+    
+//    //实例化一个NSDateFormatter对象
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    //设定时间格式,这里可以设置成自己需要的格式
+//    [dateFormatter setDateFormat:@"zzz"];
+//    
+//    NSDate *confromTimesp = [NSDate dateWithTimeIntervalSince1970:[MDay integerValue]];
+//    NSString *currentDateStr = [[dateFormatter stringFromDate:confromTimesp] stringByReplacingOccurrencesOfString:@"GMT" withString:@""];
+//    NSString *sign = [currentDateStr substringWithRange:NSMakeRange(0, 1)];
+//    NSString *number = [currentDateStr substringFromIndex:1];
+//    NSMutableArray *match = [[number componentsSeparatedByString:@":"] mutableCopy];
+    NSString *timeZone = [self getGMT:MDay];
+    
+//    if (match.count == 2) {
+//        timeZone = [NSString stringWithFormat:@"%@%@.%i",sign,match[0],[match[1] integerValue]/60];
+//    } else if (match.count == 1){
+//        timeZone = currentDateStr;
+//    }
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/match_json_get?MType=%li&MState=%@&MDay=%@&gmt=%@",appUrl,(long)type,state,MDay,timeZone];
+    
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+//        LSLastestParamResult *last = [LSLastestParamResult mj_objectWithKeyValues:responseObject];
+        
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"赛程赛果请求出错");
+    }];
+}
+
+// 用户登陆
++ (void)userLoginWithName:(NSString *)uname andPassword:(NSString *)password WithCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/app_login?uname=%@&password=%@&entype=1",appUrl,uname,password];
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"用户登陆请求出错");
+    }];
+}
+
+// 第三方登陆
++ (void)userThirdLoginWithParams:(NSDictionary *)params WithCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/oauth_login?",appUrl];
+//    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [LSHttpTool GETWithURL:url params:params success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"第三方登陆请求出错");
+    }];
+}
+
+// 用户信息请求
++ (void)getUserInfoWithToken:(NSString *)token withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/sns_info_get?userid=0",appUrl];
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"即时比分请求出错");
+    }];
+}
+
+// 用户注册
++ (void)userRegisterWithName:(NSString *)uname andPassword:(NSString *)password WithCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/user_register?uname=%@&password=%@&entype=1",appUrl,uname,password];
+
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"用户注册请求出错");
+    }];
+    
+}
+
++ (void)getWikiWithType:(NSInteger)type withCompleted:(Completed)completed failure:(Failure)failure{
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/live/wiki_list_get?mtype=%li",appUrl,(long)type];
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        // 当日的比赛 列表不需要缓存
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"维基请求出错");
+    }];
+}
+
+// 维基提交
++ (void)wikiWithParam:(NSDictionary *)wikiParam withCompleted:(Completed)completed failure:(Failure)failure {
+
+    NSDictionary *dic = @{@"data":wikiParam};
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dic options:0 error:nil];
+    NSString *myString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+    NSLog(@"维基=%@",myString);
+    NSDictionary *params =@{@"data":myString};
+    NSLog(@"params--%@",params);
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/Log/wiki_set?",appUrl];
+    NSLog(@"维基提交链接%@data=%@",url,myString);
+    [LSHttpTool GETWithURL:url params:params success:^(id responseObject) {
+                
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"维基提交请求出错");
+    }];
+    
+}
+
+// 个人资料修改
++ (void)userInfoWithParam:(NSDictionary *)userParam withCompleted:(Completed)completed failure:(Failure)failure {
+
+    
+    NSDictionary *dic = @{@"data":userParam};
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dic options:0 error:nil];
+    NSString *myString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+//    myString = [myString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"信息=%@",myString);
+//    NSDictionary *params =@{@"data":myString};
+//    NSLog(@"params--%@",params);
+//    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/info_set?",appUrl];
+//    NSLog(@"维基提交链接%@data=%@",url,myString);
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/info_set?",appUrl];
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    NSString *token = [defaults objectForKey:@"token"];
+    
+    // sign 加密
+    NSString *sign = [NSString stringWithFormat:@"http://app.likesport.com/api/users/info_setapp_id=106data=%@token=%@",myString,token];
+//    sign = [sign stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"sing=%@",sign);
+    
+    const char *cStr = [sign UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5( cStr, sign.length, digest );
+    NSMutableString *result = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+        [result appendFormat:@"%02x", digest[i]];
+    
+    NSDictionary *params = @{@"app_id":@106,@"data":myString,@"sign":result,@"token":token};
+    
+    // 网址编码
+//    url = [NSString stringWithFormat:@"%@&token=%@&app_id=106&data=%@&sign=%@",url,token,myString,result];
+//    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"修改资料请求链接:%@&token=%@&app_id=106&data=%@&sign=%@",url,token,myString,result);
+//    [LSHttpTool POSTWithURL:url params:param success:^(id responseObject) {
+//        !completed ? : completed(responseObject);
+//    } failure:^(NSError *error) {
+//        !failure ? : failure(error);
+//        NSLog(@"个人资料修改请求出错");
+//    }];
+    
+    [LSHttpTool GETWithSignURL:url params:params success:^(id responseObject) {
+        NSLog(@"");
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"个人资料修改请求出错");
+    }];
+}
+
+//词典转换为字符串
+
++ (NSString*)dictionaryToJson:(NSDictionary *)dic
+
+{
+    
+    NSError *parseError = nil;
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:&parseError];
+    
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+}
+
+//- ()getlanguage
+//{
+//    NSArray *languages = [NSLocale preferredLanguages];
+//    NSString *currentLan = [languages objectAtIndex:0];
+//    if ([currentLan rangeOfString:@"zh-Hans"].location != NSNotFound) {
+//        _language = @"gb";
+//    } else if ([currentLan isEqualToString:@"zh-HK"]||[currentLan isEqualToString:@"zh-TW"]) {
+//        _language = @"big";
+//    } else if ([currentLan rangeOfString:@"zh-Hant"].location != NSNotFound) {
+//        _language = @"big";
+//    } else {
+//        _language = @"en";
+//    }
+//}
+
+// 关注联赛
++ (void)followMatchWithState:(NSInteger)state Type:(NSInteger)type withMatchID:(NSInteger)matchID withToken:(NSString *)token withCompleted:(Completed)completed failure:(Failure)failure{
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/follow_ptype_set?ptype=3&mid=%li&mtype=%li&status=%li",appUrl,(long)matchID,(long)type,(long)state];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+    }];
+}
++ (void)followMatchWithParam:(NSDictionary *)param withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/follow_ptype_set?",appUrl];
+    [LSHttpTool GETWithURL:url params:param success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+        
+        NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];  // 我的关注刷新标志
+//        [defaults setBool:YES forKey:@"follow"];
+        [defaults setBool:YES forKey:@"followView"];
+        [defaults synchronize];
+        
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+    }];
+}
+
+// 获取用户关注的联赛列表
++ (void)getMatchListWithUserID:(NSString *)UserID withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/follow_matchtype_get?userid=0",appUrl];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+    }];
+}
+
+// 获取用户关注的球队列表
++ (void)getTeamListWithUserID:(NSString *)UserID withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/follow_teams_get?userid=0",appUrl];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+    }];
+}
+
+
+// 获取评论列表
++ (void)getCommentType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure {
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/sns/match_comment_get?mid=%li&mtype=%li",appUrl,(long)matchID,(long)type];
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        // 当日的比赛 列表不需要缓存
+        !completed ? : completed(responseObject);
+    }failure:^(NSError *error) {
+        !failure ? : failure(error);
+        
+        NSLog(@"评论请求网络出错");
+    }];
+}
+
+// 评论提交
++ (void)commentWithType:(NSInteger)type withMid:(NSInteger)mid withReplyId:(NSInteger)replyId withContent:(NSString *)content withCompleted:(Completed)completed failure:(Failure)failure {
+
+    
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/sns/match_comment_set?mtype=%li&mid=%li&replyid=%li&content=%@",appUrl,(long)type,(long)mid,(long)replyId,content];
+//    NSLog(@"评论提交链接%@data=%@",url,myString);
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"评论提交请求出错");
+    }];
+    
+}
+
+// 删除评论
++ (void)deleteCommentWithId:(NSInteger)Id withCompleted:(Completed)completed failure:(Failure)failure {
+//    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+//    NSString *token = [defaults objectForKey:@"token"];
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/sns/match_comment_del?id=%li",appUrl,(long)Id];
+    
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"评论删除请求出错");
+    }];
+}
+
+// 设置信鸽
++ (void)settingXGWithState:(NSDictionary *)state withCompleted:(Completed)completed failure:(Failure)failure {
+//    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+//    NSString *token = [defaults objectForKey:@"token"];
+    NSLog(@"%@",state);
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/xgstate_set?",appUrl];
+    
+    
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:state options:0 error:nil];
+    NSString *myString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"信鸽设置链接%@%@",url,myString);
+//    NSDictionary *dic = @{@"data":wikiParam};
+//    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dic options:0 error:nil];
+//    NSString *myString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+//    
+//    NSDictionary *params =@{@"data":myString};
+//    NSLog(@"params--%@",params);
+//    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/Log/wiki_set?",appUrl];
+//    NSLog(@"维基提交链接%@data=%@",url,myString);
+    
+    [LSHttpTool GETWithURL:url params:state success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"信鸽设置请求出错");
+    }];
+}
+
+// 反馈提交
++ (void)feedback:(NSString *)feedback withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/feedback_set?rmark=%@",appUrl,feedback];
+    
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    [LSHttpTool GETWithURL:url params:nil success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"反馈提交出错");
+    }];
+    
+}
+
+// 搜索
++ (void)searchWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure{
+    NSString *url = @"http://h.likesport.com/DataSearch/Default.aspx?";
+    
+//    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
+//    NSString *myString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+//    NSLog(@"信鸽设置链接%@%@",url,myString);
+    
+    [LSHttpTool GETWithURL:url params:params success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"搜索请求出错");
+    }];
+}
+
+// 搜索球队结果页
++ (void)teamWithUrl:(NSString *)url WithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *urlString = [[NSString alloc] initWithFormat:@"%@/api/live/%@?",appUrl,url];
+    
+    [LSHttpTool GETWithURL:urlString params:params success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"搜索球队资料请求出错");
+    }];
+}
+
+// 球队详情
++ (void)getTeamInfoWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure {
+    NSString *urlString = [[NSString alloc] initWithFormat:@"%@/api/mdata/team_info_get?",appUrl];
+    
+    [LSHttpTool GETWithURL:urlString params:params success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"搜索球队资料请求出错");
+    }];
+
+}
+
+// 球队赛程
++ (void)getTeamLeagueWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure{
+    NSString *urlString = [[NSString alloc] initWithFormat:@"%@/api/mdata/team_stage_match?",appUrl];
+    
+    [LSHttpTool GETWithURL:urlString params:params success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+    } failure:^(NSError *error) {
+        !failure ? : failure(error);
+        NSLog(@"搜索球队赛程请求出错");
+    }];
+}
+
+// 根据时间获取时区
++ (NSString *)getGMT:(NSString *)time {
+    //实例化一个NSDateFormatter对象
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    //设定时间格式,这里可以设置成自己需要的格式
+    [dateFormatter setDateFormat:@"zzz"];
+    
+    NSDate *confromTimesp = [NSDate dateWithTimeIntervalSince1970:[time integerValue]];
+    NSString *currentDateStr = [[dateFormatter stringFromDate:confromTimesp] stringByReplacingOccurrencesOfString:@"GMT" withString:@""];
+    NSString *sign = [currentDateStr substringWithRange:NSMakeRange(0, 1)];
+    NSString *number = [currentDateStr substringFromIndex:1];
+    NSMutableArray *match = [[number componentsSeparatedByString:@":"] mutableCopy];
+    NSString *timeZone;
+    
+    if (match.count == 2) {
+        timeZone = [NSString stringWithFormat:@"%@%@.%li",sign,match[0],[match[1] integerValue]/60];
+    } else if (match.count == 1){
+        timeZone = currentDateStr;
+    }
+    
+    return timeZone;
+}
+
++ (void)updataAvatarWithImg:(UIImage *)img withCompleted:(Completed)completed failure:(Failure)failure
+{
+    LSDataObject *uploadParam = [[LSDataObject alloc] init];
+    uploadParam.data = UIImagePNGRepresentation(img);
+    uploadParam.name = @"avatar";
+    uploadParam.filename = @"image.png";
+    uploadParam.mimeType = @"image/png";
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+//    NSString *mac_token = [defaults objectForKey:@"mac_token"];//根据键值取出name
+    NSString *token = [defaults objectForKey:@"token"];
+//    NSDictionary *param = @{@"token":token,@"app_id":@"106"};
+    
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/avatar_set?app_id=106&token=%@",appUrl,token];
+    
+//    NSLog(@"url=%@token=%@&app_id=%@",url,[param objectForKey:@"token"],[param objectForKey:@"app_id"]);
+    NSLog(@"url=%@",url);
+
+    [LSHttpTool POSTWithURL:url params:nil data:uploadParam success:^(id responseObject) {
+        
+        !completed ? : completed(responseObject);
+//        NSString *ret_code = [responseObject objectForKey:@"ret_code"];
+//        NSLog(@"response=%@",ret_code);
+    } failure:^(NSError *error) {
+        
+    }];
+//    NSData *imageData = UIImagePNGRepresentation(img);
+//    AVFile *imageFile = [AVFile fileWithName:@"image.png" data:imageData];
+//    [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//        
+//        if (succeeded)
+//        {
+//            AVUser *currentUser = [AVUser currentUser];
+//            currentUser[@"avaterUrl"] = imageFile.url;
+//            [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+//             {
+//                 if (succeeded)
+//                 {
+//                     NSDictionary * dic = [[NSUserDefaults standardUserDefaults]objectForKey:wUserInfo];
+//                     NSMutableDictionary * muDic = [[NSMutableDictionary alloc]initWithDictionary:dic];
+//                     [muDic setObject:imageFile.url forKey:@"avaterUrl"];
+//                     [[NSUserDefaults standardUserDefaults]setObject:[muDic copy] forKey:wUserInfo];
+//                     [[NSUserDefaults standardUserDefaults]synchronize];
+//                     
+//                     successBlock(imageFile.url);
+//                 }
+//                 else
+//                 {
+//                     failureBlock(error);
+//                 }
+//             }];
+//            
+//        }
+//        
+//    } progressBlock:^(NSInteger percentDone) {
+//        
+//    }];
+    
+}
+
+@end

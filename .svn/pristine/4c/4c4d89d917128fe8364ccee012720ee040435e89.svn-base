@@ -1,0 +1,25 @@
+//
+//  LSScoreGoalCell.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/30.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface LSScoreGoalCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *goal;
+@property (weak, nonatomic) IBOutlet UILabel *label0;
+@property (weak, nonatomic) IBOutlet UILabel *label1;
+@property (weak, nonatomic) IBOutlet UILabel *label2;
+@property (weak, nonatomic) IBOutlet UILabel *label3;
+@property (weak, nonatomic) IBOutlet UILabel *label4;
+@property (weak, nonatomic) IBOutlet UILabel *other;
+
+
+
++ (instancetype)cellWithTableView:(UITableView *)tableView;
+
+
+@end

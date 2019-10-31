@@ -1,0 +1,6 @@
+framework module AGIntroduceViewController_Objc {
+  umbrella header "AGIntroduceViewController-Objc-umbrella.h"
+
+  export *
+  module * { export * }
+}

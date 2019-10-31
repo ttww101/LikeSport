@@ -1,0 +1,36 @@
+//
+//  LSLiveCell.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/26.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class LSLiveFrame;
+@class LSLive;
+@class LSMore;
+@class LSLiveView;
+@protocol LSLiveCellDelegate <NSObject>
+
+@optional
+- (void)moreTable:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath;
+- (void)followTable:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath;
+@end
+@interface LSLiveCell : UITableViewCell
+
+
+@property (nonatomic, strong) LSLiveFrame *liveF;
+@property (nonatomic, strong) NSMutableArray<LSMore *> *more;
+@property (nonatomic, strong) LSLive *live;
+
+@property(nonatomic, weak) LSLiveView *liveView;
+
++ (instancetype)cellWithTableView:(UITableView *)tableView;
++ (instancetype)footballCellWithTableView:(UITableView *)tableView;
+
+@property (weak, nonatomic) id<LSLiveCellDelegate> delegate;
+
+- (void)changeArrowWithUp:(BOOL)up;
+
+@end

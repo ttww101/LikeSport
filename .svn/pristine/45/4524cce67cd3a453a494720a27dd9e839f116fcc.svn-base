@@ -1,0 +1,428 @@
+//
+//  AppDelegate.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/3/28.
+//  Copyright © 2016年 likesport. All rights reserved.
+//
+
+#import "AppDelegate.h"
+#import "MMDrawerController.h"
+#import "UMMobClick/MobClick.h"
+#import "XGPush.h"
+#import "XGSetting.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import "iflyMSC/IFlyMSC.h"
+#import "Definition.h"
+
+#import "RAYNewFunctionGuideVC.h"
+
+#import "LiveViewController.h"
+#import "LSNavigationController.h"
+#import "PlayingController.h"
+#import "ResultController.h"
+//#import "UMessage.h"
+//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
+//#import <UserNotifications/UserNotifications.h>
+//#endif
+////以下几个库仅作为调试引用引用的
+//#import <AdSupport/AdSupport.h>
+//#import <CommonCrypto/CommonDigest.h>
+
+@interface AppDelegate ()
+
+@end
+
+@implementation AppDelegate
+
+- (void)registerPushForIOS8{
+    //Types
+    UIUserNotificationType types = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+    
+    //Actions
+    UIMutableUserNotificationAction *acceptAction = [[UIMutableUserNotificationAction alloc] init];
+    
+    acceptAction.identifier = @"ACCEPT_IDENTIFIER";
+    acceptAction.title = @"Accept";
+    
+    acceptAction.activationMode = UIUserNotificationActivationModeForeground;
+    acceptAction.destructive = NO;
+    acceptAction.authenticationRequired = NO;
+    
+    //Categories
+    UIMutableUserNotificationCategory *inviteCategory = [[UIMutableUserNotificationCategory alloc] init];
+    
+    inviteCategory.identifier = @"INVITE_CATEGORY";
+    
+    [inviteCategory setActions:@[acceptAction] forContext:UIUserNotificationActionContextDefault];
+    
+    [inviteCategory setActions:@[acceptAction] forContext:UIUserNotificationActionContextMinimal];
+    
+//    [acceptAction release];
+    
+    NSSet *categories = [NSSet setWithObjects:inviteCategory, nil];
+    
+//    [inviteCategory release];
+    
+    
+    UIUserNotificationSettings *mySettings = [UIUserNotificationSettings settingsForTypes:types categories:categories];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
+    
+    
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
+//注册UserNotification成功的回调
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+    //用户已经允许接收以下类型的推送
+    //UIUserNotificationType allowedTypes = [notificationSettings types];
+    
+}
+
+//按钮点击事件回调
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler{
+    if([identifier isEqualToString:@"ACCEPT_IDENTIFIER"]){
+        NSLog(@"ACCEPT_IDENTIFIER is clicked");
+    }
+    
+    completionHandler();
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    
+    //NSString * deviceTokenStr = [XGPush registerDevice:deviceToken];
+    
+    void (^successBlock)(void) = ^(void){
+        //成功之后的处理
+        NSLog(@"[XGPush Demo]register successBlock");
+    };
+    
+    void (^errorBlock)(void) = ^(void){
+        //失败之后的处理
+        NSLog(@"[XGPush Demo]register errorBlock");
+    };
+    
+    // 设置账号
+    //	[XGPush setAccount:@"test"];
+    
+    //注册设备
+    NSString * deviceTokenStr = [XGPush registerDevice:deviceToken successCallback:successBlock errorCallback:errorBlock];
+    
+    // 储存本机设备号
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    [defaults setObject:deviceTokenStr forKey:@"mac_token"];
+    //如果不需要回调
+    //[XGPush registerDevice:deviceToken];
+    
+    //打印获取的deviceToken的字符串
+    NSLog(@"[XGPush Demo] deviceTokenStr is %@",deviceTokenStr);
+}
+
+#pragma mark 收到推送时做的处理
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
+{
+//    [UMessage didReceiveRemoteNotification:userInfo];
+
+    //推送反馈(app运行时)
+
+//    NSString *  pushName = [userInfo objectForKey:@"action"];
+//    NSLog(@"pushName%@",pushName);
+    
+    if (userInfo) {
+        
+        self.pushInfo = userInfo;
+    }
+    
+    // 消除红点
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
+//    UIUserNotificationSettings *settings = [UIUserNotificationSettings            settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+//    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    
+    //回调版本示例
+    /*
+     void (^successBlock)(void) = ^(void){
+     //成功之后的处理
+     NSLog(@"[XGPush]handleReceiveNotification successBlock");
+     };
+     
+     void (^errorBlock)(void) = ^(void){
+     //失败之后的处理
+     NSLog(@"[XGPush]handleReceiveNotification errorBlock");
+     };
+     
+     void (^completion)(void) = ^(void){
+     //完成之后的处理
+     NSLog(@"[xg push completion]userInfo is %@",userInfo);
+     };
+     
+     [XGPush handleReceiveNotification:userInfo successCallback:successBlock errorCallback:errorBlock completion:completion];
+     */
+}
+
+//如果deviceToken获取不到会进入此事件
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+    
+    NSString *str = [NSString stringWithFormat: @"Error: %@",err];
+    
+    NSLog(@"[XGPush Demo]%@",str);
+    
+}
+
+// 告诉代理进程启动但还没进入状态保存
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+
+    NSDictionary* userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    if(userInfo){//推送信息
+        self.pushInfo = userInfo;//[userInfo copy]
+    }
+    
+     // 友盟统计
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    [MobClick setAppVersion:version]; //version标识
+    
+    [MobClick setLogEnabled:YES];
+    UMConfigInstance.appKey = @"57451d2067e58e30bc00158d";
+//    UMConfigInstance.ChannelId = @"www.likesport.com";
+    [MobClick startWithConfigure:UMConfigInstance];
+
+    // 信鸽
+    [XGPush setAccount:@"1234"];
+    [XGPush startApp:2200209132 appKey:@"IH8929VJKP1G"];
+    [XGPush handleLaunching:launchOptions];
+    [self registerPushForIOS8];
+    
+    
+//    sleep(2);
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // 讯飞语音
+    //显示SDK的版本号
+//    NSLog(@"verson=%@",[IFlySetting getVersion]);
+    //设置sdk的log等级，log保存在下面设置的工作路径中
+    [IFlySetting setLogFile:LVL_ALL];
+    //打开输出在console的log开关
+    [IFlySetting showLogcat:NO];
+    //设置sdk的工作路径
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cachePath = [paths objectAtIndex:0];
+    [IFlySetting setLogFilePath:cachePath];
+    //创建语音配置,appid必须要传入，仅执行一次则可
+    NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",APPID_VALUE];
+    //所有服务启动前，需要确保执行createUtility
+    [IFlySpeechUtility createUtility:initString];
+    
+
+    // 信鸽推送开关初始化
+    NSDictionary *df = @{@"switchType":@YES};
+    [[NSUserDefaults standardUserDefaults]registerDefaults:df];
+    
+    
+    self.window.bounds = [UIScreen mainScreen].bounds;
+    self.window.backgroundColor = [UIColor whiteColor];
+    
+    
+
+    [[FBSDKApplicationDelegate sharedInstance] application:application
+                             didFinishLaunchingWithOptions:launchOptions];
+    
+    LSTabBarController *tabVc = [[LSTabBarController alloc] init];
+    
+  
+    self.window.rootViewController =tabVc;
+    self.tabBarController = tabVc;
+    [self.window makeKeyAndVisible];
+    
+    RAYNewFunctionGuideVC *vc = [[RAYNewFunctionGuideVC alloc]init];
+//    vc.titles = @[NSLocalizedStringFromTable(@"Enter the analysis of the event data", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Expand Quick View Score Details", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Go to view team information", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Pay attention to all the races in the league, get the latest score in real time", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Quickly search for more events", @"InfoPlist",nil),];
+    vc.titles = @[NSLocalizedStringFromTable(@"Match analysis ,line-up and  statistics", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Match details available", @"InfoPlist",nil),NSLocalizedStringFromTable(@"Get the score by searching the team or tournament", @"InfoPlist",nil),];
+
+    NSString* frame0=[NSString stringWithFormat:@"{{%f,124},{%f,80}}",5.0f,[UIScreen mainScreen].bounds.size.width-100.0f];
+    NSString* frame1=[NSString stringWithFormat:@"{{%f,124},{100,80}}",[UIScreen mainScreen].bounds.size.width-100];
+    NSString* frame2=[NSString stringWithFormat:@"{{%f,40.0},{100,80}}",60.0f];
+    NSString* frame3=[NSString stringWithFormat:@"{{%f,0.0},{100,80}}",[UIScreen mainScreen].bounds.size.width-100];
+    NSString* frame4=[NSString stringWithFormat:@"{{%f,5.0},{100,80}}",[UIScreen mainScreen].bounds.size.width-100];
+   // vc.frames=@[frame0,frame1,frame2,frame3,frame4];
+    vc.frames=@[frame0,frame1,frame4];
+    vc.nextaction=^(int index){
+        
+                if (index==0) {
+                    //NSLog(@"live:%@",livevc);
+                    [self.tabBarController setSelectedIndex:index];
+                    LSNavigationController* navvc=(LSNavigationController*)self.tabBarController.viewControllers[index];
+                    LiveViewController* livevc=navvc.viewControllers[0];
+        
+                    [livevc.segmentView selectTabWithIndex:2 animate:NO];
+                }
+        
+//                if (index==2) {
+//                    [self.tabBarController setSelectedIndex:0];
+//                    LSNavigationController* navvc=(LSNavigationController*)self.tabBarController.viewControllers[0];
+//                    LiveViewController* livevc=navvc.viewControllers[0];
+//                    livevc.resultController.selectedaction();
+//        
+//                }
+//                if (index==4) {
+//        
+//                   LSNavigationController* navvc=(LSNavigationController*)self.tabBarController.viewControllers[0];
+//                    [navvc popToViewController:navvc.viewControllers[0] animated:NO];
+//                    
+//                }
+
+            
+    };
+   // [self.tabBarController presentViewController:vc animated:NO completion:^{
+     //         }];
+
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSUserDefaults *TimeOfBootCount = [NSUserDefaults standardUserDefaults];
+    NSLog(@"version:%@--cuuurent version:%f",version,((NSString*)[TimeOfBootCount valueForKey:@"currentversion"]).floatValue);
+    CGFloat currentversion=((NSString*)[TimeOfBootCount valueForKey:@"currentversion"]).floatValue;
+    
+    if ((![TimeOfBootCount valueForKey:@"currentversion"])||currentversion!=version.floatValue) {
+        [TimeOfBootCount setValue:version forKey:@"currentversion"];
+        [TimeOfBootCount setValue:@"1" forKey:@"time"];
+        [self.tabBarController presentViewController:vc animated:NO completion:^{
+            
+        }];
+
+   }
+    /**
+    NSUserDefaults *TimeOfBootCount = [NSUserDefaults standardUserDefaults];
+    
+    if (![TimeOfBootCount valueForKey:@"time"]) {
+        
+        [TimeOfBootCount setValue:@"1" forKey:@"time"];
+        
+        [self.tabBarController presentViewController:vc animated:NO completion:^{
+            
+        }];
+
+        NSLog(@"第一次启动");
+        
+    }else{
+        
+        [vc.timer invalidate];
+        vc.timer=nil;
+        vc=nil;
+        
+        NSLog(@"不是第一次启动");
+    }
+**/
+    
+    // 消除红点
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
+
+    //设置 shortcutItems   需要注意的是shortcutItems数组最多只能加入四个item，超过四个只会显示前面的四个
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0) {
+#pragma mark -- 3D touch
+        UIApplicationShortcutIcon *icon1 = [UIApplicationShortcutIcon iconWithTemplateImageName:@"football"];
+        UIApplicationShortcutItem *item1 = [[UIApplicationShortcutItem alloc] initWithType:@"item1" localizedTitle:NSLocalizedStringFromTable(@"Soccer", @"InfoPlist", nil) localizedSubtitle:nil icon:icon1 userInfo:nil];
+        
+        //栏目2
+        UIApplicationShortcutIcon *icon2 = [UIApplicationShortcutIcon iconWithTemplateImageName:@"basketball"];
+        UIApplicationShortcutItem *item2 = [[UIApplicationShortcutItem alloc] initWithType:@"item2" localizedTitle:NSLocalizedStringFromTable(@"Basketball", @"InfoPlist", nil) localizedSubtitle:nil icon:icon2 userInfo:nil];
+        
+        //栏目3
+        UIApplicationShortcutIcon *icon3 = [UIApplicationShortcutIcon iconWithTemplateImageName:@"tennisball"];
+        UIApplicationShortcutItem *item3 = [[UIApplicationShortcutItem alloc] initWithType:@"item3" localizedTitle:NSLocalizedStringFromTable(@"Tennis", @"InfoPlist", nil) localizedSubtitle:nil icon:icon3 userInfo:nil];
+        
+        //栏目4
+        UIApplicationShortcutIcon *icon4 = [UIApplicationShortcutIcon iconWithTemplateImageName:@"star"];
+        UIApplicationShortcutItem *item4 = [[UIApplicationShortcutItem alloc] initWithType:@"item4" localizedTitle:NSLocalizedStringFromTable(@"My focus", @"InfoPlist", nil) localizedSubtitle:nil icon:icon4 userInfo:nil];
+        application.shortcutItems = @[item1, item2, item3, item4];
+
+    }
+    
+    //获取 Build  构建版本号
+    NSLog(@"构建版本号=%@",[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]);
+    
+    return YES;
+}
+
+#pragma mark -  3D Touch 代理方法
+-(void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL))completionHandler{
+    //根据Item对应的type标识处理对应的点击操作
+    NSString *itemType = shortcutItem.type;
+
+    if([@"item1" isEqualToString:itemType]){ // 足球
+        [self pushToCategoryWithTag:0];
+    }
+    else if([@"item2" isEqualToString:itemType]){  // 篮球
+        [self pushToCategoryWithTag:1];
+    }
+    else if ([@"item3" isEqualToString:itemType]){  // 网球
+        [self pushToCategoryWithTag:2];
+    }
+    else if ([@"item4" isEqualToString:itemType]){  // 我的关注
+        [self.tabBarController setSelectedIndex:1];
+    }
+}
+
+- (void)pushToCategoryWithTag:(int)tag{
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSNumber numberWithInt:tag] forKey:@"segmentTag"];
+    [defaults synchronize];
+    [self.tabBarController setSelectedIndex:0];
+
+}
+
+// facebook跳转
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+}
+
+/**
+ *  全局改变Nav
+ */
+//- (void)changeNav
+//{
+//    //设置NavigationBar背景颜色
+//    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:52/255.0 green:98/255.0 blue:142/255.0 alpha:1]];
+//    //@{}代表Dictionary
+//    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+//    //不设置这个无法修改状态栏字体颜色
+//    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlack];
+//
+//    //返回按钮的颜色
+//    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+//}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+
+}
+
+// 从后台进入前台
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    // facebook
+    [FBSDKAppEvents activateApp];
+
+    // 消除红点
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+     
+@end

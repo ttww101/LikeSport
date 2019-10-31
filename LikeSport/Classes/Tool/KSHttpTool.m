@@ -1,0 +1,247 @@
+//
+//  KSHttpTool.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/7.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "KSHttpTool.h"
+#import "AFNetworking.h"
+#import "KSConstant.h"
+#import "AppDelegate.h"
+@implementation KSHttpTool
+static AFHTTPSessionManager *manager;
++(AFHTTPSessionManager *)sharedHttpSessionManager {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manager = [AFHTTPSessionManager manager];
+        manager.operationQueue.maxConcurrentOperationCount=INT_MAX;
+        manager.responseSerializer.acceptableContentTypes = nil;//[NSSet setWithObject:@"text/plain"];
+        manager.securityPolicy = [AFSecurityPolicy defaultPolicy];
+        manager.securityPolicy.allowInvalidCertificates = YES;//忽略https证书
+        manager.securityPolicy.validatesDomainName = NO;//是否验证域名
+    });
+    
+    return manager;
+}
++ (void)POSTWithURL:(NSString *)url params:(NSDictionary *)params success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+//    session.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+
+    [session POST:url parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
+        // 这里可以获取到目前的数据请求的进度
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        !success ? : success(responseObject);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        !failure ? : failure(error);
+    }];
+
+}
+
+// 上传多张图片
++ (void)POSTWithURL:(NSString *)url params:(NSDictionary *)params dataArray:(NSArray<KSDataObject *> *)dataArray success:(void (^)(id responseObject))success failure:(void (^)(NSError *error))failure {
+    // 1.创建请求管理对象
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+
+    // 2.发送请求
+    [session POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        for (KSDataObject *data in dataArray) {
+            [formData appendPartWithFileData:data.data name:data.name fileName:data.filename mimeType:data.mimeType];
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        // 这里可以获取到目前的数据请求的进度
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        !success ? : success(responseObject);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        !failure ? : failure(error);
+
+    }];
+
+}
+
+// 上传头像
++ (void)POSTWithURL:(NSString *)url params:(NSDictionary *)params data:(KSDataObject *)data success:(void (^)(id responseObject))success failure:(void (^)(NSError *error))failure {
+    // 1.创建请求管理对象
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+
+    // 2.发送请求
+    [manager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        [formData appendPartWithFileData:data.data name:data.name fileName:data.filename mimeType:data.mimeType];
+
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        // 这里可以获取到目前的数据请求的进度
+        NSLog(@"%lf",1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+//        NSLog(@"请求成功：%@",responseObject);
+
+//        NSLog(@"responseObject=%@",[responseObject objectForKey:@"ret_code"]);
+        !success ? : success(responseObject);
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        !failure ? : failure(error);
+//        NSLog(@"请求失败：%@",error);
+
+    }];
+    
+}
+
+
+
++ (void)GETWithURL:(NSString *)url params:(NSDictionary *)params success:(void (^)(id responseObject))success failure:(void (^)(NSError *))failure {
+
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    NSString *mac_token = [defaults objectForKey:@"mac_token"];//根据键值取出name
+    NSString *token = [defaults objectForKey:@"token"];
+    
+    NSString *url1 = [NSString stringWithFormat:@"%@&app_id=%li&mac_token=%@&lan=%@&token=%@&version=%@",url,(long)appID,mac_token,NSLocalizedStringFromTable(@"lan", @"InfoPlist", nil),token,[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+    
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+//    AFHTTPSessionManager *session=nil;
+//     session=[KSHttpTool sharedHttpSessionManager];
+    
+    
+    if (params) {
+        
+        NSString *str = [self dictionaryToJson:params];
+        
+        str =[str stringByReplacingOccurrencesOfString:@"{" withString:@""];
+        str =[str stringByReplacingOccurrencesOfString:@"}" withString:@""];
+        str =[str stringByReplacingOccurrencesOfString:@"," withString:@"&"];
+        str =[str stringByReplacingOccurrencesOfString:@":" withString:@"="];
+        str =[str stringByReplacingOccurrencesOfString:@" " withString:@""];
+        str =[str stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+        str =[str stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        
+//        NSLog(@"请求链接%@&%@",url1,str);
+
+    } else {
+        
+//        NSLog(@"请求链接%@",url1);
+    }
+
+
+    // 设置超时时间
+//    [session.requestSerializer willChangeValueForKey:@"timeoutInterval"];
+   // session.requestSerializer.timeoutInterval = 3.f;
+//    [session.requestSerializer didChangeValueForKey:@"timeoutInterval"];
+    
+    session.responseSerializer.acceptableContentTypes = nil;//[NSSet setWithObject:@"text/plain"];
+    session.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    session.securityPolicy.allowInvalidCertificates = YES;//忽略https证书
+    session.securityPolicy.validatesDomainName = NO;//是否验证域名
+
+
+//    session.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    [session GET:url1 parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+        // 这里可以获取到目前的数据请求的进度
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+
+        !success ? : success(responseObject);
+        [task cancel];
+        [session.session finishTasksAndInvalidate];
+        
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        !failure ? : failure(error);
+        [task cancel];
+        [session.session finishTasksAndInvalidate];
+    }];
+
+}
+
++ (void)GETWithSignURL:(NSString *)url params:(NSDictionary *)params success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    
+    
+//    [dic setDictionary:params];
+
+    
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+//    NSLog(@"请求链接%@",url);
+    
+//    session.responseSerializer.acceptableContentTypes = nil;//[NSSet setWithObject:@"text/plain"];
+//    session.securityPolicy = [AFSecurityPolicy defaultPolicy];
+//    session.securityPolicy.allowInvalidCertificates = YES;//忽略https证书
+//    session.securityPolicy.validatesDomainName = NO;//是否验证域名
+    
+    session.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    [session GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+        // 这里可以获取到目前的数据请求的进度
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+        !success ? : success(responseObject);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        !failure ? : failure(error);
+    }];
+}
+
+//+ (void)GETIDWithURL:(NSString *)url params:(NSDictionary *)params success:(void (^)(id responseObject))success failure:(void (^)(NSError *))failure {
+//    
+//    NSLog(@"请求链接%@",url);
+//    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+//    
+//    session.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/xml"];
+//    [session GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+//        // 这里可以获取到目前的数据请求的进度
+//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//        !success ? : success(responseObject);
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        !failure ? : failure(error);
+//    }];
+//    
+//}
+
+// 字典转json
++ (NSString*)dictionaryToJson:(NSDictionary *)dic
+
+{
+    
+    NSError *parseError = nil;
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:&parseError];
+    
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+}
+         
++ (NSString*)getPreferredLanguage
+{
+    
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSArray * allLanguages = [defaults objectForKey:@"AppleLanguages"];
+    
+    NSString * preferredLang = [allLanguages objectAtIndex:0];
+    
+    NSString *lan;
+
+//    NSLog(@"当前语言:%@", preferredLang);
+    
+    if (!preferredLang) {
+        [self getPreferredLanguage];
+    } else if ([preferredLang rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        lan = @"gb";
+    } else if ([preferredLang isEqualToString:@"zh-HK"]||[Language isEqualToString:@"zh-TW"]) {
+        lan = @"big";
+    } else if ([preferredLang rangeOfString:@"zh-Hant"].location != NSNotFound) {
+        lan = @"big";
+    } else {
+        lan = @"en";
+    }
+    return lan;
+
+}
+
+
+
+@end
+
+
+
+@implementation KSDataObject
+
+@end

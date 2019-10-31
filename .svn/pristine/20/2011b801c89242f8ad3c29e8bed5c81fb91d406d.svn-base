@@ -1,0 +1,34 @@
+//
+//  LSLiveTableViewCell.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/7.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "LSLive.h"
+
+@class LSLiveTableViewCell;
+
+@protocol LSExpansionCellDelegate <NSObject>
+
+@optional
+- (void)expansionTable:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath;
+
+@end
+
+
+@interface LSLiveTableViewCell : UITableViewCell
+
+
+
+@property (nonatomic, strong) LSLive *live;
+
+// 声明点击展开按钮要执行的代码块
+//@property (nonatomic, strong) void(^btnClick)();
+
+@property (weak, nonatomic) id<LSExpansionCellDelegate> delegate;
+
+
+@end

@@ -1,0 +1,267 @@
+//
+//  KSBattleCell.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/24.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "KSBattleCell.h"
+#import "KSAnalyse.h"
+#import "KSBasketAnalyse.h"
+#import "KSConstant.h"
+
+@interface KSBattleCell ()
+@property (weak, nonatomic) IBOutlet UILabel *time;
+@property (weak, nonatomic) IBOutlet UILabel *match;
+@property (weak, nonatomic) IBOutlet UILabel *hteam;
+@property (weak, nonatomic) IBOutlet UILabel *cteam;
+@property (weak, nonatomic) IBOutlet UILabel *hscore;
+
+@property (weak, nonatomic) IBOutlet UILabel *wonloss;
+
+@end
+@implementation KSBattleCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+}
+
+- (void)setPkData:(Pk_Data *)pkData
+{
+    _pkData = pkData;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.timeZone = [NSTimeZone systemTimeZone];
+    if ([Language rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    } else {
+        [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    }
+    NSDate *theday = [NSDate dateWithTimeIntervalSince1970:pkData.starttime];
+    NSString *date = [dateFormatter stringFromDate:theday];
+    self.time.text = date;
+    self.match.text = pkData.matchtypefullname;
+    self.hteam.text = pkData.hteamname;
+    self.cteam.text = pkData.cteamname;
+//    if (pkData.hteamid == pkData.hteam_id || pkData.hteamid == pkData.cteam_id) {
+//        if (!pkData.isPkData && !pkData.isFixturesData) {
+//
+//        } else {
+//            self.hteam.textColor = [UIColor colorWithRed:31/255.0 green:101/255.0 blue:74/255.0 alpha:1];
+//        }
+//    }
+//    
+//    if (pkData.cteamid == pkData.cteam_id || pkData.cteamid == pkData.hteam_id) {
+//        if (pkData.isPkData && pkData.isFixturesData) {
+//
+//        } else {
+//            self.cteam.textColor = [UIColor colorWithRed:178/255.0 green:123/255.0 blue:5/255.0 alpha:1];
+//        }
+//    }
+    
+    self.hscore.text = [NSString stringWithFormat:@"%li-%li",(long)pkData.full_h,(long)pkData.full_c];
+    
+    if (pkData.isHteam) {
+        if (pkData.hteamid == pkData.hteam_id) {
+            if (pkData.full_h > pkData.full_c) {
+                [self setWonlossWith:1];
+            } else if (pkData.full_h == pkData.full_c) {
+                [self setWonlossWith:2];
+            } else if (pkData.full_h < pkData.full_c) {
+                [self setWonlossWith:3];
+            }
+        } else if (pkData.hteamid == pkData.cteam_id){
+            if (pkData.full_h < pkData.full_c) {
+                [self setWonlossWith:1];
+            } else if (pkData.full_h == pkData.full_c) {
+                [self setWonlossWith:2];
+            } else if (pkData.full_h > pkData.full_c) {
+                [self setWonlossWith:3];
+            }
+        }
+    } else {
+        if (pkData.cteamid == pkData.hteam_id) {
+            if (pkData.full_h > pkData.full_c) {
+                
+                [self setWonlossWith:1];
+            } else if (pkData.full_h == pkData.full_c) {
+                [self setWonlossWith:2];
+            } else if (pkData.full_h < pkData.full_c) {
+                [self setWonlossWith:3];
+            }
+        } else if (pkData.cteamid == pkData.cteam_id) {
+            if (pkData.full_h < pkData.full_c) {
+                [self setWonlossWith:1];
+            } else if (pkData.full_h == pkData.full_c) {
+                [self setWonlossWith:2];
+            } else if (pkData.full_h > pkData.full_c) {
+                [self setWonlossWith:3];
+            }
+        }
+    }
+    
+    
+    
+    if (pkData.isPkData) {
+        self.wonloss.hidden = YES;
+    } else if (pkData.isFixturesData) {
+        self.wonloss.hidden = YES;
+        self.hscore.text = @"VS";
+    } else {
+        self.wonloss.hidden = NO;
+    }
+    
+    // 球队相关联赛
+    if (pkData.isTeamInfo) {
+        if ([pkData.momenttype isEqualToString:@"I"]) {
+            self.match.text = [NSString stringWithFormat:@"%@ %li",NSLocalizedStringFromTable(@"Round", @"InfoPlist", nil),(long)pkData.round];
+//            NSLocalizedStringFromTable(@"Stop", @"InfoPlist", nil)
+//            "Round"="Round";
+//            "Group"="Group";
+        } else if ([pkData.momenttype isEqualToString:@"X"]) {
+            KSConstant *constant = [[KSConstant alloc] init];
+            self.match.text = [NSString stringWithFormat:@"%@ %@%@",pkData.momentname,NSLocalizedStringFromTable(@"Group", @"InfoPlist", nil),[constant getLetterWithNumber:pkData.group]];
+
+        } else if ([pkData.momenttype isEqualToString:@"F"]) {
+            self.match.text = [NSString stringWithFormat:@"%@ %li",NSLocalizedStringFromTable(@"Round", @"InfoPlist", nil),(long)pkData.round];
+            self.match.text = pkData.momentname;
+        }
+
+
+        if ([pkData.state isEqualToString:@"F"]) {
+            self.wonloss.hidden = NO;
+        } else  {
+            self.wonloss.hidden = YES;
+            self.hscore.text = @"VS";
+        }
+    }
+    
+    
+}
+
+- (void)setBasketPkData:(BasketPk_Data *)basketPkData {
+    _basketPkData = basketPkData;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.timeZone = [NSTimeZone systemTimeZone];
+    if ([Language rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    } else {
+        [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    }
+    NSDate *theday = [NSDate dateWithTimeIntervalSince1970:basketPkData.starttime];
+    NSString *date = [dateFormatter stringFromDate:theday];
+    self.time.text = date;
+    self.match.text = basketPkData.matchtypefullname;
+    self.hteam.text = basketPkData.hteamname;
+    self.cteam.text = basketPkData.cteamname;
+    
+    self.hscore.text = [NSString stringWithFormat:@"%li:%li",(long)basketPkData.total_h,(long)basketPkData.total_c];
+    
+    if (basketPkData.isHteam) {
+        if (basketPkData.hteamid == basketPkData.hteam_id) {
+            if (basketPkData.total_h > basketPkData.total_c) {
+                [self setWonlossWith:1];
+            } else if (basketPkData.total_h == basketPkData.total_c) {
+                [self setWonlossWith:2];
+            } else if (basketPkData.total_h < basketPkData.total_c) {
+                [self setWonlossWith:3];
+            }
+        } else if (basketPkData.hteamid == basketPkData.cteam_id){
+            if (basketPkData.total_h < basketPkData.total_c) {
+                [self setWonlossWith:1];
+            } else if (basketPkData.total_h == basketPkData.total_c) {
+                [self setWonlossWith:2];
+            } else if (basketPkData.total_h > basketPkData.total_c) {
+                [self setWonlossWith:3];
+            }
+        }
+    } else {
+        if (basketPkData.cteamid == basketPkData.hteam_id) {
+            if (basketPkData.total_h > basketPkData.total_c) {
+                
+                [self setWonlossWith:1];
+            } else if (basketPkData.total_h == basketPkData.total_c) {
+                [self setWonlossWith:2];
+            } else if (basketPkData.total_h < basketPkData.total_c) {
+                [self setWonlossWith:3];
+            }
+        } else if (basketPkData.cteamid == basketPkData.cteam_id) {
+            if (basketPkData.total_h < basketPkData.total_c) {
+                [self setWonlossWith:1];
+            } else if (basketPkData.total_h == basketPkData.total_c) {
+                [self setWonlossWith:2];
+            } else if (basketPkData.total_h > basketPkData.total_c) {
+                [self setWonlossWith:3];
+            }
+        }
+    }
+    
+    
+    
+    if (basketPkData.isPkData) {
+        self.wonloss.hidden = YES;
+    } else if (basketPkData.isFixturesData) {
+        self.wonloss.hidden = YES;
+        self.hscore.text = @"VS";
+    } else {
+        self.wonloss.hidden = NO;
+    }
+    
+    // 球队相关联赛
+    if (basketPkData.isTeamInfo) {
+        if ([basketPkData.momenttype isEqualToString:@"I"]) {
+            self.match.text = [NSString stringWithFormat:@"%@ %li",NSLocalizedStringFromTable(@"Round", @"InfoPlist", nil),(long)basketPkData.round];
+            //            NSLocalizedStringFromTable(@"Stop", @"InfoPlist", nil)
+            //            "Round"="Round";
+            //            "Group"="Group";
+        } else if ([basketPkData.momenttype isEqualToString:@"X"]) {
+            KSConstant *constant = [[KSConstant alloc] init];
+            self.match.text = [NSString stringWithFormat:@"%@ %@%@",basketPkData.momentname,NSLocalizedStringFromTable(@"Group", @"InfoPlist", nil),[constant getLetterWithNumber:basketPkData.group]];
+            
+        } else if ([basketPkData.momenttype isEqualToString:@"F"]) {
+            self.match.text = [NSString stringWithFormat:@"%@ %li",NSLocalizedStringFromTable(@"Round", @"InfoPlist", nil),(long)basketPkData.round];
+            self.match.text = basketPkData.momentname;
+        }
+        
+        
+        if ([basketPkData.state isEqualToString:@"F"]) {
+            self.wonloss.hidden = NO;
+        } else  {
+            self.wonloss.hidden = YES;
+            self.hscore.text = @"VS";
+        }
+    }
+
+}
+
+- (void)setWonlossWith:(NSInteger)won {
+    if (won == 1) {
+        self.wonloss.text = NSLocalizedStringFromTable(@"W", @"InfoPlist", nil);
+        self.wonloss.textColor = [UIColor colorWithRed:31/255.0 green:101/255.0 blue:74/255.0 alpha:1];
+    } else if (won == 2) {
+        self.wonloss.text = NSLocalizedStringFromTable(@"D", @"InfoPlist", nil);
+        self.wonloss.textColor = [UIColor colorWithRed:241/255.0 green:188/255.0 blue:56/255.0 alpha:1];
+    } else if (won == 3) {
+        self.wonloss.text = NSLocalizedStringFromTable(@"L", @"InfoPlist", nil);
+        self.wonloss.textColor = [UIColor redColor];
+    }
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
++ (instancetype)cellWithTableView:(UITableView *)tableView
+{
+    static NSString *ID = @"battleCell";
+    id cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    
+    if (cell == nil) {
+        cell = [[self alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+    }
+    return cell;
+}
+@end

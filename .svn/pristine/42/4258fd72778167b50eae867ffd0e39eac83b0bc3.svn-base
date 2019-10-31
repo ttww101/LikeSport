@@ -1,0 +1,32 @@
+//
+//  ResultController.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/8/16.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "BaseViewController.h"
+#import "HorizontalMenuView.h"
+
+@interface ResultController : BaseViewController
+@property (nonatomic, copy) void(^detailBlock)(NSInteger type,NSInteger matchID,NSInteger state);
+@property (nonatomic, copy) void(^dateBlock)(NSInteger page);
+@property (nonatomic, copy) void(^dateChooseBlock)();
+@property (nonatomic, copy) void(^isTodayBlock)(); // 选中当日时，筛选数目显示
+
+@property (nonatomic, assign) NSInteger type;
+- (void)initWithType:(NSInteger)type;
+- (NSString *)getChooseDate;
+- (void)conditionDateChooseArray:(NSArray *)array withChooseType:(NSInteger)chooseType; // 日期筛选
+- (void)conditionTadayArray:(NSArray *)array withChooseType:(NSInteger)chooseType; // 全部筛选
+- (void)selectTodayAllData;  // 当前日全部筛选
+@property (nonatomic, strong) HorizontalMenuView *horizontalMenuView;
+@property (nonatomic, assign) NSInteger pageIndex;
+- (void)setHorizontalMenuView;
+/**
+ *  日期选择器页
+ */
+@property (nonatomic, assign) BOOL isDatePicker;
+
+@end

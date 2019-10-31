@@ -1,0 +1,26 @@
+//
+//  LSNetworkTool.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/7.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import "Reachability.h"
+typedef NS_ENUM(NSUInteger, LSNetworkType) {
+    LSNetworkTypeNone = 0,
+    LSNetworkType2G = 1,
+    LSNetworkType3G = 2,
+    LSNetworkType4G = 3,
+    LSNetworkType5G = 4, // /  5G目前为猜测结果
+    LSNetworkTypeWiFi = 5,
+};
+@interface LSNetworkTool : NSObject
+
++ (LSNetworkType)getNetworkLinkType;
+
+
+@end

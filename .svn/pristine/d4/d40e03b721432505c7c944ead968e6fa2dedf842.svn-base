@@ -1,0 +1,50 @@
+//
+//  LSLastestParamResult.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/8.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "MJExtension.h"
+#import "LSLive.h"
+@class FollowResult;
+@class LiveResult;
+@interface LSLastestParamResult : NSObject
+
+@property (nonatomic, copy) NSString *ret_total;
+
+@property (nonatomic, copy) NSString *ret_code;
+
+@property (nonatomic, strong) LSLive *result;
+
+
+
+//@property (nonatomic, strong) NSArray<LSLive *> *result;
+
+
+@end
+
+@interface FollowResult : NSObject
+
+@property (nonatomic, copy) NSString *ret_total;
+
+@property (nonatomic, copy) NSString *ret_code;
+
+@property (nonatomic, strong) LSLive *result;
+
+
+
+//@property (nonatomic, strong) NSArray<LSLive *> *result;
+
+
+@end
+
+@interface LiveResult : NSObject
+@property (nonatomic, copy) NSString *ret_total;
+
+@property (nonatomic, copy) NSString *ret_code;
+
+@property (nonatomic, strong) NSArray *result;
+@end

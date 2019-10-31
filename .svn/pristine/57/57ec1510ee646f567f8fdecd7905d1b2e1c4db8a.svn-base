@@ -1,0 +1,71 @@
+//
+//  LSLiveExpansionCell.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/27.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSLiveExpansionCell.h"
+
+@interface LSLiveExpansionCell ()
+@property (weak, nonatomic) IBOutlet UILabel *hteamname;
+@property (weak, nonatomic) IBOutlet UILabel *cteamname;
+@property (weak, nonatomic) IBOutlet UILabel *total_h;
+@property (weak, nonatomic) IBOutlet UILabel *total_c;
+@property (weak, nonatomic) IBOutlet UILabel *st1_h;
+@property (weak, nonatomic) IBOutlet UILabel *st1_c;
+@property (weak, nonatomic) IBOutlet UILabel *st2_h;
+@property (weak, nonatomic) IBOutlet UILabel *st2_c;
+@property (weak, nonatomic) IBOutlet UILabel *half_h;
+@property (weak, nonatomic) IBOutlet UILabel *half_c;
+@property (weak, nonatomic) IBOutlet UILabel *st3_h;
+@property (weak, nonatomic) IBOutlet UILabel *st3_c;
+@property (weak, nonatomic) IBOutlet UILabel *st4_h;
+@property (weak, nonatomic) IBOutlet UILabel *st4_c;
+@property (weak, nonatomic) IBOutlet UILabel *half_h2;
+@property (weak, nonatomic) IBOutlet UILabel *half_c2;
+
+@end
+@implementation LSLiveExpansionCell
+
+
+- (void)setLive:(LSLive *)live
+{
+    _live = live;
+    
+    self.hteamname.text = live.hteamname;
+    self.cteamname.text = live.cteamname;
+    self.total_h.text = [NSString stringWithFormat:@"%ld",(long)live.total_h];
+    self.total_c.text = [NSString stringWithFormat:@"%ld",(long)live.total_c];
+    self.st1_h.text = [NSString stringWithFormat:@"%ld",(long)live.st1_h];
+    self.st1_c.text = [NSString stringWithFormat:@"%ld",(long)live.st1_c];
+    self.st2_h.text = [NSString stringWithFormat:@"%ld",(long)live.st2_h];
+    self.st2_c.text = [NSString stringWithFormat:@"%ld",(long)live.st2_c];
+    self.half_h.text = [NSString stringWithFormat:@"%ld",live.st1_h + live.st2_h];
+    self.half_c.text = [NSString stringWithFormat:@"%ld",live.st1_c + live.st2_c];
+    self.st3_h.text = [NSString stringWithFormat:@"%ld",(long)live.st3_h];
+    self.st3_c.text = [NSString stringWithFormat:@"%ld",(long)live.st3_c];
+    self.st4_h.text = [NSString stringWithFormat:@"%ld",(long)live.st4_h];
+    self.st4_c.text = [NSString stringWithFormat:@"%ld",(long)live.st4_c];
+    self.half_h2.text = [NSString stringWithFormat:@"%ld",live.st3_h + live.st4_h];
+    self.half_c2.text = [NSString stringWithFormat:@"%ld",live.st3_c + live.st4_c];
+    
+    
+}
+
+
+
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

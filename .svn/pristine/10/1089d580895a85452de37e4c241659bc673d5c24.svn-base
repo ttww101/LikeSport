@@ -1,0 +1,103 @@
+//
+//  RecommendViewController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/1.
+//  Copyright © 2016年 likesport. All rights reserved.
+//
+
+#import "RecommendViewController.h"
+#import <MessageUI/MessageUI.h>
+
+@interface RecommendViewController ()<MFMessageComposeViewControllerDelegate>
+
+@end
+
+@implementation RecommendViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    UIButton *loginBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    loginBtn.frame = CGRectMake((kSceenWidth - 80)/4, 190, 60, 30);
+    loginBtn.backgroundColor = LSBlue;
+    [loginBtn setTitle:@"发送" forState:UIControlStateNormal];
+    [loginBtn addTarget:self action:@selector(login) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:loginBtn];
+}
+
+
+
+- (void)login {
+
+    
+//    MFMessageComposeViewController *messageCtl = [[MFMessageComposeViewController alloc] init];
+//    
+//    if ([MFMessageComposeViewController canSendText]) {
+//        messageCtl.messageComposeDelegate = self;
+//        messageCtl.recipients = @[@"15913353729"];
+//        messageCtl.body = @"发送彩信内容";
+////        NSArray *attachments= [self.attachments.text componentsSeparatedByString:@","];
+//
+//        if ([MFMessageComposeViewController canSendAttachments]) {
+////                NSString *path=[[NSBundle mainBundle]pathForResource:@"football" ofType:@"png"];
+////                NSURL *url=[NSURL fileURLWithPath:path];
+////                [messageCtl addAttachmentURL:url withAlternateFilename:@"Image"];
+//            NSData *imgData = UIImagePNGRepresentation([UIImage imageNamed:@"demo.png"]);
+//            [messageCtl addAttachmentData:imgData typeIdentifier:@"identifier1" filename:@"demo.png"];
+//        }
+//        [self presentViewController:messageCtl animated:YES completion:nil];
+//    }
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    // Set the annular determinate mode to show task progress.
+    hud.mode = MBProgressHUDModeText;
+    // Move to bottm center.
+    //    hud.offset = CGPointMake(0.f, kSceenHeight/2);
+    
+    [hud hideAnimated:YES afterDelay:1.f];
+
+    switch (result) {
+        case MessageComposeResultSent:
+            hud.label.text = @"讯息传送成功";
+
+            //讯息传送成功
+            break;
+            
+        case MessageComposeResultFailed:
+            hud.label.text = @"讯息传送失败";
+
+            //讯息传送失败
+            break;
+            
+        case MessageComposeResultCancelled:
+            hud.label.text = @"讯息被用户取消传送";
+
+            //讯息被用户取消传送
+            break;
+            
+        default:
+            break;
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,6 @@
+framework module AGColor_Objc {
+  umbrella header "AGColor+Objc-umbrella.h"
+
+  export *
+  module * { export * }
+}

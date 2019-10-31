@@ -1,0 +1,596 @@
+//
+//  BasketExpansionView.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/9/29.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "BasketExpansionView.h"
+#import "LSLiveFrame.h"
+#import "LSLive.h"
+@interface BasketExpansionView()
+
+@property (nonatomic,weak) UILabel *hteamnameView;
+@property (nonatomic,weak) UILabel *cteamnameView;
+//@property (nonatomic,weak) UILabel *hteamname_2View;
+//@property (nonatomic,weak) UILabel *cteamname_2View;
+//@property (nonatomic,weak) UILabel *total_hView;
+//@property (nonatomic,weak) UILabel *total_cView;
+@property (nonatomic,weak) UILabel *st1View;
+@property (nonatomic,weak) UILabel *st2View;
+@property (nonatomic,weak) UILabel *st3View;
+@property (nonatomic,weak) UILabel *st4View;
+@property (nonatomic,weak) UILabel *halfSView;
+@property (nonatomic,weak) UILabel *halfXView;
+@property (nonatomic,weak) UILabel *otView;
+
+@property (nonatomic,weak) UILabel *st1_hView;
+@property (nonatomic,weak) UILabel *st1_cView;
+@property (nonatomic,weak) UILabel *st2_hView;
+@property (nonatomic,weak) UILabel *st2_cView;
+@property (nonatomic,weak) UILabel *half_hSView;
+@property (nonatomic,weak) UILabel *half_cSView;
+@property (nonatomic,weak) UILabel *st3_hView;
+@property (nonatomic,weak) UILabel *st3_cView;
+@property (nonatomic,weak) UILabel *st4_hView;
+@property (nonatomic,weak) UILabel *st4_cView;
+@property (nonatomic,weak) UILabel *half_hXView;
+@property (nonatomic,weak) UILabel *half_cXView;
+@property (nonatomic,weak) UILabel *ot_hView;
+@property (nonatomic,weak) UILabel *ot_cView;
+@end
+
+@implementation BasketExpansionView
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        // 添加所有子控件
+        [self setUpAllChildView];
+        self.userInteractionEnabled = YES;
+    }
+    return self;
+}
+
+// 添加所有子控件
+- (void)setUpAllChildView
+{
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kSceenWidth, 20)];
+    titleView.backgroundColor = [UIColor colorWithRed:237/255.0 green:238/255.0 blue:238/255.0 alpha:1];
+    [self addSubview:titleView];
+    
+    // 主队名
+    UILabel *hteamnameView = [[UILabel alloc] init];
+    hteamnameView.font = [UIFont systemFontOfSize:14];
+    [self addSubview:hteamnameView];
+    _hteamnameView = hteamnameView;
+    
+    // 客队名
+    UILabel *cteamnameView = [[UILabel alloc] init];
+    cteamnameView.font = [UIFont systemFontOfSize:14];
+//    cteamnameView.textAlignment = NSTextAlignmentRight;
+    [self addSubview:cteamnameView];
+    _cteamnameView = cteamnameView;
+    
+    UILabel *st1View = [[UILabel alloc] init];
+    st1View.font = [UIFont systemFontOfSize:14];
+    st1View.textAlignment = NSTextAlignmentCenter;
+    st1View.textColor = [UIColor grayColor];
+    [titleView addSubview:st1View];
+    _st1View = st1View;
+    
+    UILabel *st2View = [[UILabel alloc] init];
+    st2View.font = [UIFont systemFontOfSize:14];
+    st2View.textAlignment = NSTextAlignmentCenter;
+    st2View.textColor = [UIColor grayColor];
+    [titleView addSubview:st2View];
+    _st2View = st2View;
+    
+    UILabel *st3View = [[UILabel alloc] init];
+    st3View.font = [UIFont systemFontOfSize:14];
+    st3View.textAlignment = NSTextAlignmentCenter;
+    st3View.textColor = [UIColor grayColor];
+    [titleView addSubview:st3View];
+    _st3View = st3View;
+    
+    UILabel *st4View = [[UILabel alloc] init];
+    st4View.font = [UIFont systemFontOfSize:14];
+    st4View.textAlignment = NSTextAlignmentCenter;
+    st4View.textColor = [UIColor grayColor];
+    [titleView addSubview:st4View];
+    _st4View = st4View;
+    
+    UILabel *halfSView = [[UILabel alloc] init];
+    halfSView.font = [UIFont systemFontOfSize:14];
+    halfSView.textAlignment = NSTextAlignmentCenter;
+    halfSView.textColor = [UIColor grayColor];
+    [titleView addSubview:halfSView];
+    _halfSView = halfSView;
+    
+    UILabel *halfXView = [[UILabel alloc] init];
+    halfXView.font = [UIFont systemFontOfSize:14];
+    halfXView.textAlignment = NSTextAlignmentCenter;
+    halfXView.textColor = [UIColor grayColor];
+    [titleView addSubview:halfXView];
+    _halfXView = halfXView;
+    
+    UILabel *otView = [[UILabel alloc] init];
+    otView.font = [UIFont systemFontOfSize:14];
+    otView.textAlignment = NSTextAlignmentCenter;
+    otView.textColor = [UIColor grayColor];
+    [titleView addSubview:otView];
+    _otView = otView;
+    
+    
+    
+    UILabel *st1_hView = [[UILabel alloc] init];
+    st1_hView.font = [UIFont systemFontOfSize:14];
+    st1_hView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st1_hView];
+    _st1_hView = st1_hView;
+
+    UILabel *st1_cView = [[UILabel alloc] init];
+    st1_cView.font = [UIFont systemFontOfSize:14];
+    st1_cView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st1_cView];
+    _st1_cView = st1_cView;
+
+    UILabel *st2_hView = [[UILabel alloc] init];
+    st2_hView.font = [UIFont systemFontOfSize:14];
+    st2_hView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st2_hView];
+    _st2_hView = st2_hView;
+
+    UILabel *st2_cView = [[UILabel alloc] init];
+    st2_cView.font = [UIFont systemFontOfSize:14];
+    st2_cView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st2_cView];
+    _st2_cView = st2_cView;
+
+    UILabel *half_hSView = [[UILabel alloc] init];
+    half_hSView.font = [UIFont systemFontOfSize:14];
+    half_hSView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:half_hSView];
+    _half_hSView = half_hSView;
+
+    UILabel *half_cSView = [[UILabel alloc] init];
+    half_cSView.font = [UIFont systemFontOfSize:14];
+    half_cSView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:half_cSView];
+    _half_cSView = half_cSView;
+
+    UILabel *st3_hView = [[UILabel alloc] init];
+    st3_hView.font = [UIFont systemFontOfSize:14];
+    st3_hView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st3_hView];
+    _st3_hView = st3_hView;
+
+    UILabel *st3_cView = [[UILabel alloc] init];
+    st3_cView.font = [UIFont systemFontOfSize:14];
+    st3_cView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st3_cView];
+    _st3_cView = st3_cView;
+
+
+
+    UILabel *st4_hView = [[UILabel alloc] init];
+    st4_hView.font = [UIFont systemFontOfSize:14];
+    st4_hView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st4_hView];
+    _st4_hView = st4_hView;
+
+    UILabel *st4_cView = [[UILabel alloc] init];
+    st4_cView.font = [UIFont systemFontOfSize:14];
+    st4_cView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:st4_cView];
+    _st4_cView = st4_cView;
+
+
+
+
+    UILabel *half_hXView = [[UILabel alloc] init];
+    half_hXView.font = [UIFont systemFontOfSize:14];
+    half_hXView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:half_hXView];
+    _half_hXView = half_hXView;
+    
+    UILabel *half_cXView = [[UILabel alloc] init];
+    half_cXView.font = [UIFont systemFontOfSize:14];
+    half_cXView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:half_cXView];
+    _half_cXView = half_cXView;
+    
+    UILabel *ot_hView = [[UILabel alloc] init];
+    ot_hView.font = [UIFont systemFontOfSize:14];
+    ot_hView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:ot_hView];
+    _ot_hView = ot_hView;
+    
+    UILabel *ot_cView = [[UILabel alloc] init];
+    ot_cView.font = [UIFont systemFontOfSize:14];
+    ot_cView.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:ot_cView];
+    _ot_cView = ot_cView;
+
+
+}
+
+- (void)setLive:(LSLive *)live {
+    _live = live;
+    
+    // 设置frame
+    [self setUpFrame];
+    
+    // 设置frame
+    [self setUpData];
+
+}
+
+- (void)setUpFrame {
+//    CGFloat width = (kSceenWidth-10)/7;
+//    CGFloat high = 20;
+//    CGFloat space = 5;
+////    if (_live.ot_h != -1) {
+//    _otView.frame = CGRectMake(kSceenWidth-width-space, 0, width, high);
+////    }
+//    _halfXView.frame = CGRectMake(kSceenWidth-2*width-space, 0, width, high);
+//    _st4View.frame = CGRectMake(kSceenWidth-3*width-space, 0, width, high);
+//    _st3View.frame = CGRectMake(kSceenWidth-4*width-space, 0, width, high);
+//    _halfSView.frame = CGRectMake(kSceenWidth-5*width-space, 0, width, high);
+//    _st2View.frame = CGRectMake(kSceenWidth-6*width-space, 0, width, high);
+//    _st1View.frame = CGRectMake(kSceenWidth-7*width-space, 0, width, high);
+//    _hteamnameView.frame = CGRectMake(space, high, kSceenWidth-7*width-2*space, high);
+//    _cteamnameView.frame = CGRectMake(space, 2*high, kSceenWidth-7*width-2*space, high);
+//
+//    _st1_hView.frame = CGRectMake(_st1View.frame.origin.x, high, width, high);
+//    _st1_cView.frame = CGRectMake(_st1View.frame.origin.x, 2*high, width, high);
+//    _st2_hView.frame = CGRectMake(_st2View.frame.origin.x, high, width, high);
+//    _st2_cView.frame = CGRectMake(_st2View.frame.origin.x, 2*high, width, high);
+//    _half_hSView.frame = CGRectMake(_halfSView.frame.origin.x, high, width, high);
+//    _half_cSView.frame = CGRectMake(_halfSView.frame.origin.x, 2*high, width, high);
+//    _st3_hView.frame = CGRectMake(_st3View.frame.origin.x, high, width, high);
+//    _st3_cView.frame = CGRectMake(_st3View.frame.origin.x, 2*high, width, high);
+//    _st4_hView.frame = CGRectMake(_st4View.frame.origin.x, high, width, high);
+//    _st4_cView.frame = CGRectMake(_st4View.frame.origin.x, 2*high, width, high);
+//    _half_hXView.frame = CGRectMake(_halfXView.frame.origin.x, high, width, high);
+//    _half_cXView.frame = CGRectMake(_halfXView.frame.origin.x, 2*high, width, high);
+//    _ot_hView.frame = CGRectMake(kSceenWidth-width-space, high, width, high);
+//    _ot_cView.frame = CGRectMake(kSceenWidth-width-space, 2*high, width, high);
+    CGFloat width = 320/7;
+    CGFloat high = 20;
+    CGFloat space = 5;
+    CGFloat min = kSceenWidth/2;
+    //    if (_live.ot_h != -1) {
+    _otView.frame = CGRectMake(min+width/2+2*width, 0, width, high);
+    //    }
+    _halfXView.frame = CGRectMake(min+width/2+width, 0, width, high);
+    _st4View.frame = CGRectMake(min+width/2, 0, width, high);
+    _st3View.frame = CGRectMake(min-width/2, 0, width, high);
+    _halfSView.frame = CGRectMake(min-width/2-width, 0, width, high);
+    _st2View.frame = CGRectMake(min-width/2-2*width, 0, width, high);
+    _st1View.frame = CGRectMake(min-width/2-3*width, 0, width, high);
+    _hteamnameView.frame = CGRectMake(space, high, kSceenWidth-7*width-2*space, high);
+    _cteamnameView.frame = CGRectMake(space, 2*high, kSceenWidth-7*width-2*space, high);
+    
+    _st1_hView.frame = CGRectMake(_st1View.frame.origin.x, high, width, high);
+    _st1_cView.frame = CGRectMake(_st1View.frame.origin.x, 2*high, width, high);
+    _st2_hView.frame = CGRectMake(_st2View.frame.origin.x, high, width, high);
+    _st2_cView.frame = CGRectMake(_st2View.frame.origin.x, 2*high, width, high);
+    _half_hSView.frame = CGRectMake(_halfSView.frame.origin.x, high, width, high);
+    _half_cSView.frame = CGRectMake(_halfSView.frame.origin.x, 2*high, width, high);
+    _st3_hView.frame = CGRectMake(_st3View.frame.origin.x, high, width, high);
+    _st3_cView.frame = CGRectMake(_st3View.frame.origin.x, 2*high, width, high);
+    _st4_hView.frame = CGRectMake(_st4View.frame.origin.x, high, width, high);
+    _st4_cView.frame = CGRectMake(_st4View.frame.origin.x, 2*high, width, high);
+    _half_hXView.frame = CGRectMake(_halfXView.frame.origin.x, high, width, high);
+    _half_cXView.frame = CGRectMake(_halfXView.frame.origin.x, 2*high, width, high);
+    _ot_hView.frame = CGRectMake(kSceenWidth-width-space, high, width, high);
+    _ot_cView.frame = CGRectMake(kSceenWidth-width-space, 2*high, width, high);
+    
+}
+
+- (void)setUpData {
+    _halfSView.textColor = [UIColor grayColor];
+    _halfXView.textColor = [UIColor grayColor];
+    _half_hSView.textColor = [UIColor grayColor];
+    _half_cSView.textColor = [UIColor grayColor];
+    _half_hXView.textColor = [UIColor grayColor];
+    _half_cXView.textColor = [UIColor grayColor];
+    // 清空
+    _st1_hView.text = @"";
+    _st1_cView.text = @"";
+    _st2_hView.text = @"";
+    _st2_cView.text = @"";
+    _st3_hView.text = @"";
+    _st3_cView.text = @"";
+    _st4_hView.text = @"";
+    _st4_cView.text = @"";
+    _half_hSView.text = @"";
+    _half_cSView.text = @"";
+    _half_hXView.text = @"";
+    _half_cXView.text = @"";
+    _ot_hView.text = @"";
+    _ot_cView.text = @"";
+    
+    
+    if (_live.type == 1) { // 篮球
+        _st1View.text = @"1.";
+        _st2View.text = @"2.";
+        _st3View.text = @"3.";
+        _st4View.text = @"4.";
+        _halfSView.text = @"1H";
+        _halfXView.text = @"2H";
+        _otView.text = @"OT";
+        _halfXView.hidden = NO;
+        _otView.hidden = NO;
+        
+        NSInteger half_hS = (long)_live.st1_h + (long)_live.st2_h;
+        NSInteger half_cS = (long)_live.st1_c + (long)_live.st2_c;
+        if (_live.st1_h != -1 && _live.st2_h != -1) {
+            _half_hSView.text = [NSString stringWithFormat:@"%li",(long)half_hS];
+        }
+        if (_live.st1_c != -1 && _live.st2_c != -1) {
+            _half_cSView.text = [NSString stringWithFormat:@"%li",(long)half_cS];
+        }
+        
+        NSInteger half_hX = (long)_live.st3_h + (long)_live.st4_h;
+        NSInteger half_cX = (long)_live.st3_c + (long)_live.st4_c;
+        if (_live.st3_h != -1 && _live.st4_h != -1) {
+            _half_hXView.text = [NSString stringWithFormat:@"%li",(long)half_hX];
+        }
+        if (_live.st3_c != -1 && _live.st4_c != -1) {
+            _half_cXView.text = [NSString stringWithFormat:@"%li",(long)half_cX];
+        }
+        if (_live.ot_h != -1) {
+            _ot_hView.text = [NSString stringWithFormat:@"%li",(long)_live.ot_h];
+        }
+        if (_live.ot_c != -1) {
+            _ot_cView.text = [NSString stringWithFormat:@"%li",(long)_live.ot_c];
+        }
+        
+        if (_live.hascourts == 2) {
+//            _halfSView.textColor = [UIColor blackColor];
+//            _halfXView.textColor = [UIColor blackColor];
+            _half_hSView.textColor = [UIColor blackColor];
+            _half_cSView.textColor = [UIColor blackColor];
+            _half_hXView.textColor = [UIColor blackColor];
+            _half_cXView.textColor = [UIColor blackColor];
+            if (_live.st1_h != -1) {
+                _half_hSView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_h];
+
+            }
+            if (_live.st1_c != -1) {
+                _half_cSView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_c];
+
+            }
+            if (_live.st3_h != -1) {
+                _half_hXView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_h];
+
+            }
+            if (_live.st3_c != -1) {
+                _half_cXView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_c];
+
+            }
+            
+            //        _halfSView.text = [NSString stringWithFormat:@"%i - %i",_live.st1_h,_live.st1_c];
+            //        _halfXView.text = [NSString stringWithFormat:@"%i - %i",_live.st3_h,_live.st3_c];
+        } else {
+            if (_live.st1_h != -1) {
+                _st1_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_h];
+            }
+            if (_live.st1_c != -1) {
+                _st1_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_c];
+            }
+            if (_live.st2_h != -1) {
+                _st2_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st2_h];
+            }
+            if (_live.st2_c != -1) {
+                _st2_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st2_c];
+            }
+            if (_live.st3_h != -1) {
+                _st3_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_h];
+            }
+            if (_live.st3_c != -1) {
+                _st3_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_c];
+            }
+            if (_live.st4_h != -1) {
+                _st4_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st4_h];
+            }
+            if (_live.st4_c != -1) {
+                _st4_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st4_c];
+            }
+            
+        }
+    } else if (_live.type == 2) {
+//        _halfSView.textColor = [UIColor blackColor];
+//        _halfXView.textColor = [UIColor blackColor];
+        _half_hSView.textColor = [UIColor blackColor];
+        _half_cSView.textColor = [UIColor blackColor];
+        _half_hXView.textColor = [UIColor blackColor];
+        _half_cXView.textColor = [UIColor blackColor];
+        _st1View.text = @"";
+        _st2View.text = @"";
+        _halfSView.text = @"1.";
+        _st3View.text = @"2.";
+        _st4View.text = @"3.";
+        _halfXView.text = @"4.";
+        _otView.text = @"5.";
+        _halfXView.hidden = YES;
+        _otView.hidden = YES;
+        
+        if (_live.st1_h != -1) {
+            _half_hSView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_h];
+        }
+        if (_live.st1_c != -1) {
+            _half_cSView.text = [NSString stringWithFormat:@"%li",(long)_live.st1_c];
+        }
+        if (_live.st2_h != -1) {
+            _st3_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st2_h];
+        }
+        if (_live.st2_c != -1) {
+            _st3_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st2_c];
+        }
+        if (_live.st3_h != -1) {
+            _st4_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_h];
+        }
+        if (_live.st3_c != -1) {
+            _st4_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st3_c];
+        }
+        if (_live.st4_h != -1) {
+            _half_hXView.text = [NSString stringWithFormat:@"%li",(long)_live.st4_h];
+            _halfXView.hidden = NO;
+        }
+        if (_live.st4_c != -1) {
+            _half_cXView.text = [NSString stringWithFormat:@"%li",(long)_live.st4_c];
+            _halfXView.hidden = NO;
+        }
+        if (_live.st5_h != -1) {
+            _ot_hView.text = [NSString stringWithFormat:@"%li",(long)_live.st5_h];
+            _otView.hidden = NO;
+        }
+        if (_live.st5_c != -1) {
+            _ot_cView.text = [NSString stringWithFormat:@"%li",(long)_live.st5_c];
+            _otView.hidden = NO;
+        }
+
+    }
+    
+    NSTimeInterval time = [[NSDate date] timeIntervalSince1970];
+    if (time - _live.st1T_h < 20) {
+        if (_live.type == 1) {
+            _st1_hView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _half_hSView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st1_hView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2){
+            _half_hSView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st1T_c < 20) {
+        if (_live.type == 1) {
+            _st1_cView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _half_cSView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st1_cView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _half_cSView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st2T_h < 20) {
+        if (_live.type == 1) {
+            _st2_hView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _st3_hView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st2_hView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _st3_hView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st2T_c < 20) {
+        if (_live.type == 1) {
+            _st2_cView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _st3_cView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st2_cView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _st3_cView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st3T_h < 20) {
+        if (_live.type == 1) {
+            _st3_hView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _st4_hView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st3_hView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _st4_hView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st3T_c < 20) {
+        if (_live.type == 1) {
+            _st3_cView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _st4_cView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st3_cView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _st4_cView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st4T_h < 20) {
+        if (_live.type == 1) {
+            _st4_hView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _half_hXView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st4_hView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _half_hXView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st4T_c < 20) {
+        if (_live.type == 1) {
+            _st4_cView.textColor = [UIColor orangeColor];
+        } else if(_live.type == 2) {
+            _half_cXView.textColor = [UIColor orangeColor];
+        }
+    } else {
+        if (_live.type == 1) {
+            _st4_cView.textColor = [UIColor blackColor];
+        } else if(_live.type == 2) {
+            _half_cXView.textColor = [UIColor blackColor];
+        }
+    }
+    
+    if (time - _live.st5T_h < 20) {
+        _ot_hView.textColor = [UIColor orangeColor];
+    } else {
+        _ot_hView.textColor = [UIColor blackColor];
+    }
+    
+    if (time - _live.st5T_c < 20) {
+        _ot_cView.textColor = [UIColor orangeColor];
+    } else {
+        _ot_cView.textColor = [UIColor blackColor];
+    }
+    
+//    _hteamnameView.text = _live.hteamname;
+//    _cteamnameView.text = _live.cteamname;
+
+    
+}
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

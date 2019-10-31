@@ -1,0 +1,344 @@
+//
+//  LSLeftDrawerController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/5.
+//  Copyright © 2016年 likesport. All rights reserved.
+//
+
+#import "LSLeftDrawerController.h"
+#import "LSTabBarController.h"
+#import "LSChooseController.h"
+#import "LoginViewController.h"
+#import "LSLikeSportTool.h"
+#import "UserInfo.h"
+#import "RegisterViewController.h"
+#import "FollowLeagueController.h"
+#import "SettingViewController.h"
+#import "FeedbackController.h"
+
+@interface LSLeftDrawerController ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UIView *profileView;
+@property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *averImageView;
+@property (weak, nonatomic) IBOutlet UILabel *experienceLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *jewelLabel;
+@property (weak, nonatomic) IBOutlet UILabel *goldLabel;
+@property (weak, nonatomic) IBOutlet UILabel *winLabel;
+@property (weak, nonatomic) IBOutlet UILabel *levelLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lossLabel;
+
+@property (weak, nonatomic) IBOutlet UIView *loginView;
+
+@property (nonatomic, strong) NSArray *dataSource;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+@property (weak, nonatomic) IBOutlet UIButton *loginBtn;
+@property (weak, nonatomic) IBOutlet UIButton *registBtn;
+@property (weak, nonatomic) IBOutlet UIButton *settingBtn;
+
+@end
+
+@implementation LSLeftDrawerController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self setupSubviews];
+    self.view.backgroundColor = LSBlue;
+    self.loginView.backgroundColor = LSBlue;
+    self.profileView.backgroundColor = LSBlue;
+    self.tableView.tableFooterView = [[UIView alloc] init];
+    self.settingBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 2, 10, 8);
+//    [self.settingBtn setTitle:NSLocalizedStringFromTable(@"Setting", @"InfoPlist", nil) forState:UIControlStateNormal];
+//    self.tableView.backgroundColor = LSBlue;
+    
+//    [kNotificationCenter addObserver:self selector:@selector(setupDataSource) name:NotiLogin object:nil];
+
+    
+//    _dataSource = @[NSLocalizedStringFromTable(@"All", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Comment", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Contribute", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Exchange record", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Follow Match", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Follow Team", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Letter", @"InfoPlist", nil)];
+    _dataSource = @[NSLocalizedStringFromTable(@"Focus on the league", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Feedback", @"InfoPlist", nil)];
+    
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(login)];
+//    [self.profileView addGestureRecognizer:tap];
+    
+//    _loginView.hidden = YES;
+    NSString *token = [self getValueWithKey:@"token"];
+    if (token.length > 0) {
+        _loginView.hidden = YES;
+        [self getUserInfoWithToken:token];
+//        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(userCenter)];
+//        [_profileView addGestureRecognizer:tapGesture];
+    } else {
+        _loginBtn.backgroundColor = [UIColor whiteColor];
+        _loginBtn.titleLabel.text = NSLocalizedStringFromTable(@"Login", @"InfoPlist", nil);
+        _loginBtn.layer.cornerRadius = 15;
+        _registBtn.titleLabel.text = NSLocalizedStringFromTable(@"Register now", @"InfoPlist", nil);
+    }
+}
+
+//- (void)userCenter {
+//    MeViewController *meVc = [[MeViewController alloc] init];
+//    [self presentViewController:meVc animated:YES completion:nil];
+//}
+
+
+- (IBAction)loginButton:(id)sender {
+    LoginViewController *loginVc = [[LoginViewController alloc] init];
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:loginVc];
+    loginVc.tokenBlock = ^(NSString *token){
+        NSLog(@"loginToken%@",token);
+        [self saveValue:token withKey:@"token"];
+        [self getUserInfoWithToken:token];
+        _loginView.hidden = YES;
+//        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(userCenter)];
+//        [_profileView addGestureRecognizer:tapGesture];
+
+    };
+//    [loginVc setModalTransitionStyle:UIModalTransitionStylePartialCurl];
+
+    [self presentViewController:loginVc animated:YES completion:nil];
+}
+
+- (void)getUserInfoWithToken:(NSString *)token {
+    [LSLikeSportTool getUserInfoWithToken:token withCompleted:^(id result) {
+        UserInfo *last = [UserInfo mj_objectWithKeyValues:result];
+        _userNameLabel.text = last.result.nick_name;
+        _experienceLabel.text = [NSString stringWithFormat:@"%@(%@:%li)",last.result.sns_level,NSLocalizedStringFromTable(@"Exp", @"InfoPlist", nil),(long)last.result.score];
+//        NSLog(@"经验%@",last.result.avatar);
+
+        _jewelLabel.text = [NSString stringWithFormat:@"%@:%li",NSLocalizedStringFromTable(@"Gem", @"InfoPlist", nil),(long)last.result.gem];
+        _goldLabel.text = [NSString stringWithFormat:@"%@:%li",NSLocalizedStringFromTable(@"Gold", @"InfoPlist", nil),(long)last.result.gold];
+        _winLabel.text = [NSString stringWithFormat:@"%@:%li",NSLocalizedStringFromTable(@"Win", @"InfoPlist", nil),(long)last.result.sns_win_num];
+        _levelLabel.text = [NSString stringWithFormat:@"%@:%li",NSLocalizedStringFromTable(@"Draw", @"InfoPlist", nil),(long)last.result.sns_he_num];
+        _lossLabel.text = [NSString stringWithFormat:@"%@:%li",NSLocalizedStringFromTable(@"Lost", @"InfoPlist", nil),(long)last.result.sns_shu_num];
+        // 存储用户id
+        [self saveValue:[NSString stringWithFormat:@"%li",(long)last.result.userid] withKey:@"userid"];
+
+//        _dataSource = @[[NSString stringWithFormat:@"%@(%li)",NSLocalizedStringFromTable(@"All", @"InfoPlist", nil),(long)last.result.sns_news_count],NSLocalizedStringFromTable(@"Comment", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Contribute", @"InfoPlist", nil),NSLocalizedStringFromTable(@"Exchange record", @"InfoPlist", nil),[NSString stringWithFormat:@"%@(%li)",NSLocalizedStringFromTable(@"Follow Match", @"InfoPlist", nil),(long)last.result.sns_gz_1_num],[NSString stringWithFormat:@"%@(%li)",NSLocalizedStringFromTable(@"Follow Team", @"InfoPlist", nil),(long)last.result.sns_gz_2_num],NSLocalizedStringFromTable(@"Letter", @"InfoPlist", nil)];
+        _dataSource = @[[NSString stringWithFormat:@"%@(%li)",NSLocalizedStringFromTable(@"Focus on the league", @"InfoPlist", nil),(long)last.result.sns_gz_1_num],NSLocalizedStringFromTable(@"Feedback", @"InfoPlist", nil)];
+
+        
+        NSString *aver = [last.result.avatar stringByReplacingOccurrencesOfString:@"{0}" withString:@"180x180"];
+        NSString *averUrl = [[NSString alloc] initWithFormat:@"http://app.likesport.com/%@",aver];
+        [self saveValue:averUrl withKey:@"averUrl"];
+        NSLog(@"链接%@",averUrl);
+        // 加载图片之前先清除本机的头像缓存
+        [[SDImageCache sharedImageCache] removeImageForKey:averUrl];
+        [_averImageView sd_setImageWithURL:[NSURL URLWithString:averUrl] placeholderImage:[UIImage imageNamed:@"img_default"]];
+        _averImageView.contentMode =  UIViewContentModeScaleAspectFit;
+        
+        [self.tableView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+- (IBAction)registButton:(id)sender {
+    RegisterViewController *registerVC = [[RegisterViewController alloc] init];
+    registerVC.tokenBlock = ^(NSString *token,BOOL isRegister){
+        NSLog(@"loginToken%@",token);
+        [self saveValue:token withKey:@"token"];
+        [self getUserInfoWithToken:token];
+        _loginView.hidden = YES;
+    };
+//    [registerVC setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+
+    [self presentViewController:registerVC animated:YES completion:nil];
+}
+
+- (void)setupSubviews {
+    self.tableView.bounces = NO;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    // 去掉cell间白线
+//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+}
+
+- (void)setupDataSource {
+
+}
+
+#pragma mark tableView Delegate
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return _dataSource.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    static NSString *cellId = @"cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+    }
+//    cell.backgroundColor = LSBlue;
+    cell.textLabel.text = _dataSource[indexPath.row];
+    
+    UIButton *Btn = [[UIButton alloc] initWithFrame:CGRectMake(kSceenWidth*0.7, 15, 15, 15)];
+//    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(kSceenWidth*0.7, 15, 15, 15)];
+    [Btn setImage:[UIImage imageNamed:@"arrow_right"] forState:UIControlStateNormal];
+//    Btn.image = [UIImage imageNamed:@"arrow_right"];
+    [cell addSubview:Btn];
+    
+    return cell;
+}
+
+//- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+//    return YES;
+//}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    
+//    SYTheme *theme = self.dataSource[sourceIndexPath.row];
+//    [self.dataSource removeObjectAtIndex:sourceIndexPath.row];
+//    if (destinationIndexPath.row == 1) {
+//        [self.dataSource insertObject:theme atIndex:1];
+//    } else {
+//        [self.dataSource addObject:theme];
+//    }
+    
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if (indexPath.row == 0) {
+//        [self.mainController setCenterViewController:self.naviHome withCloseAnimation:YES completion:nil];
+//    } else {
+//        self.themeController.theme = self.dataSource[indexPath.row];
+//        [self.mainController setCenterViewController:self.naviTheme withCloseAnimation:YES completion:nil];
+//    }
+    
+    if (indexPath.row == 0) {
+        FollowLeagueController *vc = [[FollowLeagueController alloc] init];
+        
+//        UINavigationController *matchVC = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [matchVC setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        [self presentViewController:vc animated:YES completion:nil];
+//        [self.navigationController pushViewController:vc animated:YES];
+//        [self.mainController setCenterViewController:matchVC withCloseAnimation:YES completion:nil];
+    } else if (indexPath.row == 1) {
+        FeedbackController *vc = [[FeedbackController alloc] init];
+        [self presentViewController:vc animated:YES completion:nil];
+    }
+    
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+
+   
+}
+
+#pragma mark cell delegate
+- (void)didClickedLeftDrawerCell:(UITableViewCell *)cell {
+//    SYTheme *theme = cell.theme;
+//    NSInteger locate =  [self locateTheme:theme];
+//    if (locate < 0) return;
+//    cell.theme.isCollected = YES;
+//    
+//    NSIndexPath *sip = [NSIndexPath indexPathForRow:locate inSection:0];
+//    NSIndexPath *dip = [NSIndexPath indexPathForRow:1 inSection:0];
+//    [self.tableView moveRowAtIndexPath:sip toIndexPath:dip];
+//    [self tableView:self.tableView moveRowAtIndexPath:sip toIndexPath:dip];
+    
+//    LSChooseController *vc = [[LSChooseController alloc] init];
+//    [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark event handler
+- (IBAction)login {
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark setter & getter
+- (LSNavigationController *)naviTab {
+    if (!_naviTab) {
+        LSTabBarController *tab = [[LSTabBarController alloc] init];
+        _naviTab = [[LSNavigationController alloc] initWithRootViewController:tab];
+        _naviTab.navigationBar.hidden = YES;
+    }
+    return _naviTab;
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+#pragma mark - 字段持久缓存(保存在数据库)
+- (void)saveValue:(NSString *)value withKey:(NSString *)key
+{
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    [defaults setObject:value forKey:key];
+    //获得UIImage实例
+    [defaults synchronize];
+}
+
+- (NSString *)getValueWithKey:(NSString *)key {
+    NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
+    NSString *token = [defaults objectForKey:key];//根据键值取出name
+    return token;
+}
+
+
+
+- (IBAction)setting:(id)sender {
+    
+    SettingViewController *vc = [[SettingViewController alloc] init];
+//    UINavigationController *setVC = [[UINavigationController alloc] initWithRootViewController:vc];
+    //        [matchVC setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    [self presentViewController:vc animated:YES completion:nil];
+
+    vc.tokenBlock = ^(){
+        [self saveValue:@"" withKey:@"token"];
+        [self saveValue:@"" withKey:@"averUrl"];
+        [self saveValue:@"" withKey:@"userid"];
+        _loginView.hidden = NO;
+        _loginBtn.backgroundColor = [UIColor whiteColor];
+        _loginBtn.layer.cornerRadius = 15;
+    };
+//    [self saveValue:@"" withKey:@"token"];
+//    [self saveValue:@"" withKey:@"averUrl"];
+//    [self saveValue:@"" withKey:@"userid"];
+//    _loginView.hidden = NO;
+//    _loginBtn.backgroundColor = [UIColor whiteColor];
+//    _loginBtn.layer.cornerRadius = 15;
+
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+//    // 隐藏导航条下边的黑线
+//    [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+//    [self.navigationController.navigationBar setShadowImage:nil];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    NSString *token = [self getValueWithKey:@"token"];
+    [self getUserInfoWithToken:token];
+
+//    // 隐藏导航条下边的黑线
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+//    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+//   
+//    self.navigationController.navigationBarHidden = YES;
+//    self.automaticallyAdjustsScrollViewInsets = NO;
+}
+
+@end

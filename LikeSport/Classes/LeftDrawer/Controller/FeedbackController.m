@@ -1,0 +1,162 @@
+//
+//  FeedbackController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/7/21.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "FeedbackController.h"
+#import "KSKuaiShouTool.h"
+
+@interface FeedbackController ()<UITextViewDelegate>
+
+@property (weak, nonatomic) UITextView *textView;
+
+@end
+
+@implementation FeedbackController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+//    [self setBackBtn];
+    
+    [self setImputFeedback];
+    
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    
+    _textView.delegate = self;
+
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    //设置成NO表示当前控件响应后会传播到其他控件上，默认为YES。
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    //将触摸事件添加到当前view
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+}
+
+
+
+-(void)dismissKeyboard{
+    [_textView resignFirstResponder];
+}
+
+
+- (void)setBackBtn {
+    UINavigationBar *bar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, kSceenWidth, 64)];
+    //    [bar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    //    [bar setShadowImage:[UIImage new]];
+    [self.view addSubview:bar];
+    UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 70, 40)];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    [bar addSubview:backBtn];
+    //    [saveBtn setImage:[UIImage imageNamed:@"select"] forState:UIControlStateNormal];
+    [backBtn setTitle:NSLocalizedStringFromTable(@"Back", @"InfoPlist", nil) forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
+    //    [someButton setShowsTouchWhenHighlighted:YES];
+    UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:backBtn];
+    self.navigationItem.leftBarButtonItem = mailbutton;
+}
+
+- (void)cancel {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)setImputFeedback {
+    
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake((kSceenWidth-100)/2, 5, 100, 20)];
+////    label.text = _wiki.stagename;
+//    label.textAlignment = NSTextAlignmentCenter;
+//    [self.view addSubview:label];
+    
+    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 10, kSceenWidth-20, 150)];
+    textView.text = NSLocalizedStringFromTable(@"Have any not satisfied or Suggestions can speak well!", @"InfoPlist", nil);
+    textView.font = [UIFont systemFontOfSize:15];
+    //    textView.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:textView];
+    _textView = textView;
+    
+    
+//    UILabel *label2 = [[UILabel alloc]init];
+//    label2.numberOfLines = 0; // 需要把显示行数设置成无限制
+//    label2.font = [UIFont systemFontOfSize:15];
+//    label2.textAlignment = NSTextAlignmentLeft;
+//    label2.text = @"帮助我们获得完整的赛程资料，您可以获得100金币";
+//    CGSize size =  [self sizeWithString:label2.text font:label2.font];
+//    label2.frame = CGRectMake(10, CGRectGetMaxY(textView.frame)+5, size.width, size.height);
+//    //    label2.center = self.view.center;
+//    [self.view addSubview:label2];
+    
+    UIButton *Btn = [[UIButton alloc] initWithFrame:CGRectMake(10, 170, kSceenWidth - 20, 30)];
+    Btn.layer.cornerRadius = 12;
+    Btn.backgroundColor = KSBlue;
+    [Btn setTitle:NSLocalizedStringFromTable(@"Send", @"InfoPlist", nil) forState:UIControlStateNormal];
+    [Btn addTarget:self action:@selector(submit) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:Btn];
+    
+}
+
+- (void)submit {
+    [_textView endEditing:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [hud hideAnimated:YES afterDelay:2.f];
+    hud.mode = MBProgressHUDModeText;
+    // Move to bottm center.
+    hud.offset = CGPointMake(0.f, -10);
+
+    if ([_textView.text isEqualToString:NSLocalizedStringFromTable(@"Have any not satisfied or Suggestions can speak well!", @"InfoPlist", nil)]) {
+        hud.label.text = NSLocalizedStringFromTable(@"You do not change any information, can't submit", @"InfoPlist", nil);
+    } else {
+        [KSKuaiShouTool feedback:_textView.text withCompleted:^(id result) {
+            hud.label.text = NSLocalizedStringFromTable(@"Submitted successfully", @"InfoPlist", nil);
+            [self.navigationController popViewControllerAnimated:YES];
+//            [self dismissViewControllerAnimated:YES completion:nil];
+        } failure:^(NSError *error) {
+            hud.label.text = NSLocalizedStringFromTable(@"Submitted failed", @"InfoPlist", nil);
+            
+        }];
+    }
+}
+
+
+// 定义成方法方便多个label调用 增加代码的复用性
+- (CGSize)sizeWithString:(NSString *)string font:(UIFont *)font
+{
+    CGRect rect = [string boundingRectWithSize:CGSizeMake(kSceenWidth, 8000)//限制最大的宽度和高度
+                                       options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesFontLeading  |NSStringDrawingUsesLineFragmentOrigin//采用换行模式
+                                    attributes:@{NSFontAttributeName: font}//传人的字体字典
+                                       context:nil];
+    
+    return rect.size;
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if ([textView.text isEqualToString:NSLocalizedStringFromTable(@"Have any not satisfied or Suggestions can speak well!", @"InfoPlist", nil)]) {
+        textView.text = @"";
+    }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if (textView.text.length<1) {
+        textView.text = NSLocalizedStringFromTable(@"Have any not satisfied or Suggestions can speak well!", @"InfoPlist", nil);
+    }
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

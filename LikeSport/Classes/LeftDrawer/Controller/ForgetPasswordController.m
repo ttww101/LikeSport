@@ -1,0 +1,178 @@
+//
+//  ForgetPasswordController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/7/21.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "ForgetPasswordController.h"
+#import "KSHttpTool.h"
+#import "KSConstant.h"
+#import "Login.h"
+#import <CommonCrypto/CommonDigest.h>
+#import "CustomTextField.h"
+
+@interface ForgetPasswordController ()
+@property (weak, nonatomic) UITextField *nameTextField;
+@property (weak, nonatomic) UIButton *saveBtn;
+@end
+
+@implementation ForgetPasswordController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+//    [self setBackBtn];
+    
+    [self buildUI];
+    
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    
+    [_nameTextField becomeFirstResponder];
+}
+
+- (void)setBackBtn {
+    UINavigationBar *bar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, kSceenWidth, 64)];
+    //    [bar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    //    [bar setShadowImage:[UIImage new]];
+    [self.view addSubview:bar];
+    
+//    UIButton *saveBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 40, 40)];
+    UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 70, 40)];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+//    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -20, 0, 0);
+    [bar addSubview:backBtn];
+//        [backBtn setImage:[UIImage imageNamed:@"select"] forState:UIControlStateNormal];
+    [backBtn setTitle:NSLocalizedStringFromTable(@"Back", @"InfoPlist", nil) forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
+    //    [someButton setShowsTouchWhenHighlighted:YES];
+    UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:backBtn];
+    self.navigationItem.leftBarButtonItem = mailbutton;
+}
+
+- (void)cancel {
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)buildUI {
+    
+    UIButton *loginBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    loginBtn.frame = CGRectMake(10, 100, kSceenWidth - 20, 30);
+    [loginBtn setTitle:NSLocalizedStringFromTable(@"Send", @"InfoPlist", nil) forState:UIControlStateNormal];
+    loginBtn.backgroundColor = KSBlue;
+    loginBtn.layer.cornerRadius = 5;
+    //    loginBtn.titleLabel.textColor = KSBlue;
+    //    loginBtn.backgroundColor = [UIColor whiteColor];
+    [loginBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:loginBtn];
+    _saveBtn = loginBtn;
+    
+    
+    UITextField *nameTextField = [[CustomTextField alloc] initWithFrame:CGRectMake(10, 40, kSceenWidth - 20, 40)];
+    nameTextField.placeholder = NSLocalizedStringFromTable(@"Please enter the account", @"InfoPlist", nil);
+    //    nameTextField.text = @"swordfish";
+    nameTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    nameTextField.backgroundColor = [UIColor whiteColor];
+//    nameTextField.layer.cornerRadius = 5;
+    nameTextField.keyboardType = UIKeyboardTypeEmailAddress;
+    [nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self.view addSubview:nameTextField];
+    _nameTextField = nameTextField;
+
+    
+}
+
+- (void)textFieldDidChange:(UITextField *)textField
+{
+    if (textField.text.length > 20) {
+        textField.text = [textField.text substringToIndex:20];
+        
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows objectAtIndex:1] animated:YES];
+        
+
+        // Set the annular determinate mode to show task progress.
+        hud.mode = MBProgressHUDModeText;
+        hud.label.numberOfLines = 3;
+
+        hud.label.text = NSLocalizedStringFromTable(@"Account number format error,the length is not greater than 20", @"InfoPlist", nil);
+        [hud hideAnimated:YES afterDelay:1.f];
+    }
+}
+
+- (void)save {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows objectAtIndex:1] animated:YES];
+    
+    // Set the annular determinate mode to show task progress.
+    hud.mode = MBProgressHUDModeText;
+    [hud hideAnimated:YES afterDelay:1.f];
+    hud.label.numberOfLines = 3;
+
+    if (_nameTextField.text.length < 6) {
+        hud.label.text = NSLocalizedStringFromTable(@"Account number format error,the length can not less than 6", @"InfoPlist", nil);
+    } else {
+        
+        NSString *url = [[NSString alloc] initWithFormat:@"%@/api/users/send_email?",appUrl];
+
+        // sign 加密
+        NSString *sign = [NSString stringWithFormat:@"http://app.likesport.com/api/users/send_emailapp_id=106email=%@etype=1",_nameTextField.text];
+        NSLog(@"sing=%@",sign);
+        const char *cStr = [sign UTF8String];
+        unsigned char digest[CC_MD5_DIGEST_LENGTH];
+        CC_MD5( cStr, sign.length, digest );
+        NSMutableString *result = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+        for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+            [result appendFormat:@"%02x", digest[i]];
+        
+        NSDictionary *dic = @{@"app_id":@106,@"etype":@1,@"email":_nameTextField.text,@"sign":result};
+        
+        
+        //        url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        //        NSLog(@"修改密码请求链接%@",url);
+        [KSHttpTool GETWithSignURL:url params:dic success:^(id responseObject) {
+            //            Login *last = [Login mj_objectWithKeyValues:responseObject];
+            int ret_code = [[responseObject objectForKey:@"ret_code"] integerValue];
+            
+            if (ret_code == 0) {
+
+                if (self.forgetBlock) {
+                    
+                    self.forgetBlock();
+                }
+                [self.navigationController popViewControllerAnimated:YES];
+//                [self dismissViewControllerAnimated:YES completion:nil];
+            } else if (ret_code == 1011) {
+                hud.label.text = NSLocalizedStringFromTable(@"The user name does not exist", @"InfoPlist", nil);
+            } else if (ret_code == 1008) {
+                hud.label.text = NSLocalizedStringFromTable(@"Network error, please try again later!", @"InfoPlist", nil);
+            } else if (ret_code == 1012) {
+                hud.label.text = NSLocalizedStringFromTable(@"The account does not fill the mailbox,unable to send", @"InfoPlist", nil);
+            }
+           
+        } failure:^(NSError *error) {
+            
+        }];
+
+    }
+    
+    
+//    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

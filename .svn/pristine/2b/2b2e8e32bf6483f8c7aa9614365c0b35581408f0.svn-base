@@ -1,0 +1,35 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++7346",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++4974" : {
+
+    },
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++7346" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++4974" : 0,
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++7346" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "8CCE15BE-D61D-4B5E-BB0B-68BAD3130AC3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++4974" : "iOS\/",
+    "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++7346" : "LikeSport-iOS\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "LikeSport",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "LikeSport.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/203.88.161.155:30000\/svn\/likesports",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++4974"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/203.88.161.155:30000\/svn\/likesports",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0a740b54-2913-4d47-b9c3-e7e010a5ba3c++7346"
+    }
+  ]
+}

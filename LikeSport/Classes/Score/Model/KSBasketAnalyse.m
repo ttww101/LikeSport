@@ -1,0 +1,28 @@
+//
+//  KSBasketAnalyse.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/31.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "KSBasketAnalyse.h"
+
+@implementation KSBasketAnalyse
+
+@end
+@implementation BasketAnalyseResult
+
++ (NSDictionary *)objectClassInArray{
+    return @{@"pk_data" : [BasketPk_Data class], @"c_fixtures_data" : [BasketPk_Data class], @"h_fixtures_data" : [BasketPk_Data class], @"c_result_data" : [BasketPk_Data class], @"h_result_data" : [BasketPk_Data class]};
+}
+
+@end
+
+
+@implementation BasketPk_Data
+
+@end
+
+
+

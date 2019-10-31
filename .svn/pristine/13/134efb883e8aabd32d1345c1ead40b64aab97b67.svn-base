@@ -1,0 +1,234 @@
+//
+//  LSTopView.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/3.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSTopView.h"
+
+@interface LSTopView ()
+
+@property (weak, nonatomic) IBOutlet UILabel *cteamName;
+@property (weak, nonatomic) IBOutlet UILabel *hteamName;
+
+@property (weak, nonatomic) IBOutlet UILabel *half_bf;
+@property (weak, nonatomic) IBOutlet UILabel *full_bf;
+
+@property (weak, nonatomic) IBOutlet UILabel *time;
+@property (weak, nonatomic) IBOutlet UILabel *fullTime;
+
+
+@end
+
+@implementation LSTopView
+
+- (void)setFootballResult:(FootballBaseResult *)footballResult
+{
+    _footballResult = footballResult;
+    _hteamName.text = footballResult.hteamname;
+    _cteamName.text = footballResult.cteamname;
+
+    if (footballResult.full_h != -1 && footballResult.full_c != -1) {
+        _full_bf.text = [NSString stringWithFormat:@"%li - %li",(long)footballResult.full_h,(long)footballResult.full_c];
+    }
+    if (footballResult.half_h != -1 && footballResult.half_c != -1) {
+        _half_bf.text = [NSString stringWithFormat:@"(%li-%li)",(long)footballResult.half_h,(long)footballResult.half_c];
+    }
+    
+    if (footballResult.extratime_h != -1 && footballResult.extratime_c != -1 && footballResult.penalty_h != -1 && footballResult.penalty_c != -1) {
+        _half_bf.text = [NSString stringWithFormat:@"HT:(%li-%li) ET:(%li-%li) PK:(%li-%li)",(long)footballResult.half_h,(long)footballResult.half_c,(long)footballResult.extratime_h,(long)footballResult.extratime_c,(long)footballResult.penalty_h,(long)footballResult.penalty_c];
+    } else if (footballResult.extratime_h != -1 && footballResult.extratime_c != -1) {
+        _half_bf.text = [NSString stringWithFormat:@"HT:(%li-%li) ET:(%li-%li)",(long)footballResult.half_h,(long)footballResult.half_c,(long)footballResult.extratime_h,(long)footballResult.extratime_c];
+    } else if (footballResult.penalty_h != -1 && footballResult.penalty_c != -1){
+        _half_bf.text = [NSString stringWithFormat:@"HT:(%li-%li) PK:(%li-%li)",(long)footballResult.half_h,(long)footballResult.half_c,(long)footballResult.penalty_h,(long)footballResult.penalty_c];
+    }
+
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.timeZone = [NSTimeZone systemTimeZone];
+    if ([Language rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    } else {
+        [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    }
+    NSDate *theday = [NSDate dateWithTimeIntervalSince1970:footballResult.starttime];
+    NSString *date = [dateFormatter stringFromDate:theday];
+    _fullTime.text = date;
+
+    
+    NSString *theString = _footballResult.state;
+    NSArray *items = @[@"W",@"S",@"Z",@"X",@"J",@"F",@"D",@"Y",@"T",@"Q",@"C",@"R"];
+    NSInteger item = [items indexOfObject:theString];
+    switch (item) {
+        case 0:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Not", @"InfoPlist", nil)];
+            _half_bf.text = @"-";
+            _full_bf.text = @"-";
+            break;
+        case 1:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"1st", @"InfoPlist", nil)];
+            break;
+        case 2:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"HT", @"InfoPlist", nil)];
+            break;
+        case 3:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"2nd", @"InfoPlist", nil)];
+            break;
+        case 4:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"ET", @"InfoPlist", nil)];
+            break;
+        case 5:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Ended", @"InfoPlist", nil)];
+            break;
+        case 6:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"TBD", @"InfoPlist", nil)];
+            break;
+        case 7:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Delay", @"InfoPlist", nil)];
+            break;
+        case 8:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Stop", @"InfoPlist", nil)];
+            break;
+        case 9:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Cut", @"InfoPlist", nil)];
+            break;
+        case 10:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Cancel", @"InfoPlist", nil)];
+            break;
+        case 11:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Withdraw", @"InfoPlist", nil)];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)setBasketballResult:(BasketResult *)basketballResult
+{
+    _basketballResult = basketballResult;
+    _hteamName.text = _basketballResult.hteamname;
+    _cteamName.text = _basketballResult.cteamname;
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.timeZone = [NSTimeZone systemTimeZone];
+    if ([Language rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    } else {
+        [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    }
+    NSDate *theday = [NSDate dateWithTimeIntervalSince1970:basketballResult.starttime];
+    NSString *date = [dateFormatter stringFromDate:theday];
+    _fullTime.text = date;
+    
+    if (basketballResult.total_h != -1 && basketballResult.total_c != -1) {
+        _full_bf.text = [NSString stringWithFormat:@"%li - %li",(long)basketballResult.total_h,(long)basketballResult.total_c];
+    }
+
+    if ((_basketballResult.st3_h != -1) && (_basketballResult.st3_c != -1) && (_basketballResult.st4_h != -1) && (_basketballResult.st4_c != -1)) {
+        _half_bf.text = [NSString stringWithFormat:@"(%li-%li)",_basketballResult.st1_h + _basketballResult.st2_h,_basketballResult.st1_c + _basketballResult.st2_c];
+    } else {
+        _half_bf.text = [NSString stringWithFormat:@"-"];
+    }
+    
+    NSString *theString = _basketballResult.state;
+    NSArray *items = @[@"W",@"S",@"Z",@"X",@"J",@"F",@"D",@"Y",@"T",@"Q",@"C",@"R"];
+    NSInteger item = [items indexOfObject:theString];
+    switch (item) {
+        case 0:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Not", @"InfoPlist", nil)];
+            _full_bf.text = @"-";
+
+            
+            break;
+        case 1:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"1st", @"InfoPlist", nil)];
+            break;
+        case 2:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"HT", @"InfoPlist", nil)];
+            break;
+        case 3:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"2nd", @"InfoPlist", nil)];
+            break;
+        case 4:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"ET", @"InfoPlist", nil)];
+            break;
+        case 5:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Ended", @"InfoPlist", nil)];
+            break;
+        case 6:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"TBD", @"InfoPlist", nil)];
+            break;
+        case 7:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Delay", @"InfoPlist", nil)];
+            break;
+        case 8:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Stop", @"InfoPlist", nil)];
+            break;
+        case 9:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Cut", @"InfoPlist", nil)];
+            break;
+        case 10:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Cancel", @"InfoPlist", nil)];
+            break;
+        case 11:
+            _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"Withdraw", @"InfoPlist", nil)];
+            break;
+        default:
+            break;
+    }
+    
+    // 篮球时间状态
+    NSInteger sta = [_basketballResult.state integerValue];
+    if (_type == 1) {
+        switch (sta) {
+            case 1:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"1th", @"InfoPlist", nil)];
+                break;
+            case 2:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"2th", @"InfoPlist", nil)];
+                break;
+            case 3:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"3th", @"InfoPlist", nil)];
+                break;
+            case 4:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"4th", @"InfoPlist", nil)];
+                break;
+                
+            default:
+                break;
+        }
+    } else if (_type == 2) {
+        switch (sta) {
+            case 1:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"1rd set", @"InfoPlist", nil)];
+                break;
+            case 2:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"2rd set", @"InfoPlist", nil)];
+                break;
+            case 3:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"3rd set", @"InfoPlist", nil)];
+                break;
+            case 4:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"4rd set", @"InfoPlist", nil)];
+                break;
+            case 5:
+                _time.text = [NSString stringWithFormat:@"%@",NSLocalizedStringFromTable(@"5rd set", @"InfoPlist", nil)];
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+
+}
+
++ (instancetype)topView {
+    return [[[NSBundle mainBundle] loadNibNamed:@"LSTopView" owner:self options:nil] firstObject];
+    
+}
+
+
+@end

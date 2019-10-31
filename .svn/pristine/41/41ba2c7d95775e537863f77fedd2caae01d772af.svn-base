@@ -1,0 +1,16 @@
+//
+//  LSLiveView.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/26.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@class LSLiveFrame;
+@interface LSLiveView : UIImageView
+
+@property (nonatomic, strong) LSLiveFrame *liveF;
+
+@end

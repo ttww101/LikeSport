@@ -1,0 +1,94 @@
+//
+//  LSExpansionCell.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/10.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "LSExpansionCell.h"
+#import "LSExpansionView.h"
+#import "LSLiveFrame.h"
+#import "LSMore.h"
+#import "LSLive.h"
+#import "LSFootballExpansion.h"
+@interface LSExpansionCell ()
+
+@property(nonatomic,weak) LSExpansionView *expansionView;
+@property (weak, nonatomic) LSFootballExpansion *footballExpansion;
+
+@end
+@implementation LSExpansionCell
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        // 足球展开
+        LSFootballExpansion *footballExpansion = [[LSFootballExpansion alloc] init];
+        [self addSubview:footballExpansion];
+        _footballExpansion = footballExpansion;
+ 
+        LSExpansionView *expansionView = [[LSExpansionView alloc] init];
+        [self addSubview:expansionView];
+        _expansionView = expansionView;
+
+        
+    }
+    return self;
+}
+
+//- (void)setFootballExpansion:(LSFootballExpansion *)footballExpansion
+//{
+//    if (!_footballExpansion) {
+//        LSFootballExpansion *footballExpansion = [[LSFootballExpansion alloc] init];
+//        [self addSubview:footballExpansion];
+//        _footballExpansion = footballExpansion;
+//    }
+//}
+
+- (void)setLive:(LSLive *)live
+{
+    _live = live;
+    _footballExpansion.live = live;
+
+}
+
+- (void)setMore:(NSMutableArray<LSMore *> *)more
+{
+    _more = more;
+    _footballExpansion.more = more;
+}
+
+
+
+
+- (void)setLiveF:(LSLiveFrame *)liveF
+{
+    _liveF = liveF;
+    
+    _expansionView.frame = liveF.liveViewFrame;
+    _expansionView.liveF = liveF;
+}
+
++ (instancetype)cellWithTableView:(UITableView *)tableView
+{
+    static NSString *ID = @"expansionCell";
+    id cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    
+    if (cell == nil) {
+        cell = [[self alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:ID];
+    }
+    return cell;
+}
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

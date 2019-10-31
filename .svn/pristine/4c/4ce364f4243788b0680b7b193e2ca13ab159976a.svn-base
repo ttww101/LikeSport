@@ -1,0 +1,16 @@
+//
+//  ScoreViewController.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/3/29.
+//  Copyright © 2016年 likesport. All rights reserved.
+//
+
+#import "BaseViewController.h"
+#import "SMPagerTabView.h"
+@interface ScoreViewController : BaseViewController
+//@property (nonatomic, weak) IBOutlet APHorizontalMenu *horizontalMenu;
+
+
+
+@end

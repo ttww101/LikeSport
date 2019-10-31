@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="95" id="KGk-i7-Jjw" userLabel="Live Table View Cell" customClass="LSLiveTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="95"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="94.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="18:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vd1-YL-B8B">
+                        <rect key="frame" x="8" y="8" width="42" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="世北美预选" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EqF-DF-wbg">
+                        <rect key="frame" x="58" y="8" width="75" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="墨西哥" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nF1-fF-MC9">
+                        <rect key="frame" x="8" y="37" width="51" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="加拿大" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Y5-ak-4uY">
+                        <rect key="frame" x="8" y="65" width="51" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vhi-qZ-aPB">
+                        <rect key="frame" x="281" y="33" width="31" height="30"/>
+                        <state key="normal" title="关注"/>
+                        <connections>
+                            <action selector="force:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="TyY-QP-Vwx"/>
+                        </connections>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="20'" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="92g-IX-Elf">
+                        <rect key="frame" x="213" y="8" width="31" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="上" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ThT-T1-K0I">
+                        <rect key="frame" x="252" y="8" width="31" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u3Z-TX-63M">
+                        <rect key="frame" x="252" y="37" width="31" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mEv-MW-4el">
+                        <rect key="frame" x="252" y="65" width="31" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YOs-7i-c5o">
+                        <rect key="frame" x="282" y="4" width="30" height="30"/>
+                        <state key="normal" title="展开"/>
+                        <connections>
+                            <action selector="more:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="GHm-sC-wHE"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="YOs-7i-c5o" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-4" id="00x-S7-JJG"/>
+                    <constraint firstItem="u3Z-TX-63M" firstAttribute="height" secondItem="mEv-MW-4el" secondAttribute="height" id="6ai-wu-ylG"/>
+                    <constraint firstItem="YOs-7i-c5o" firstAttribute="width" secondItem="ThT-T1-K0I" secondAttribute="width" id="8A1-qu-sa7"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="ThT-T1-K0I" secondAttribute="trailing" constant="29" id="IQw-s7-fL7"/>
+                    <constraint firstItem="YOs-7i-c5o" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="JC7-3G-Muh"/>
+                    <constraint firstItem="Vhi-qZ-aPB" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="JZh-Vi-Gch"/>
+                    <constraint firstItem="Vhi-qZ-aPB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="25" id="KoT-Al-vVl"/>
+                    <constraint firstItem="ThT-T1-K0I" firstAttribute="width" secondItem="92g-IX-Elf" secondAttribute="width" id="Lgu-AR-Vji"/>
+                    <constraint firstItem="ThT-T1-K0I" firstAttribute="leading" secondItem="92g-IX-Elf" secondAttribute="trailing" constant="8" id="QCf-3t-nyn"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="u3Z-TX-63M" secondAttribute="trailing" constant="29" id="ZmO-76-q0U"/>
+                    <constraint firstItem="Vhi-qZ-aPB" firstAttribute="width" secondItem="u3Z-TX-63M" secondAttribute="width" id="aJe-sq-clE"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="mEv-MW-4el" secondAttribute="trailing" constant="29" id="g95-nx-k2N"/>
+                    <constraint firstItem="ThT-T1-K0I" firstAttribute="height" secondItem="u3Z-TX-63M" secondAttribute="height" id="rIr-0J-3c5"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="country1" destination="nF1-fF-MC9" id="NkX-cM-83x"/>
+                <outlet property="country2" destination="8Y5-ak-4uY" id="NwN-yd-uUm"/>
+                <outlet property="date" destination="Vd1-YL-B8B" id="QK4-UU-L3G"/>
+                <outlet property="date2" destination="92g-IX-Elf" id="lIN-is-pAq"/>
+                <outlet property="force" destination="Vhi-qZ-aPB" id="cUq-3u-yDj"/>
+                <outlet property="half" destination="ThT-T1-K0I" id="Za4-vj-d3A"/>
+                <outlet property="match" destination="EqF-DF-wbg" id="UMd-rj-aaT"/>
+                <outlet property="more" destination="YOs-7i-c5o" id="mLK-4B-15b"/>
+                <outlet property="score1" destination="u3Z-TX-63M" id="HG1-wC-wlz"/>
+                <outlet property="score2" destination="mEv-MW-4el" id="ftE-6a-IuS"/>
+            </connections>
+            <point key="canvasLocation" x="171" y="392.5"/>
+        </tableViewCell>
+    </objects>
+</document>

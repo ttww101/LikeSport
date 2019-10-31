@@ -1,0 +1,13 @@
+//
+//  TipsViewController.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 2016/11/3.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "BaseViewController.h"
+
+@interface TipsViewController : BaseViewController
+
+@end

@@ -1,0 +1,119 @@
+//
+//  CustomTableView.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/8/18.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "CustomTableView.h"
+@interface CustomTableView()
+@property (nonatomic, strong) UIView *scrollBar;
+@property (nonatomic, assign) BOOL isScrollBar;
+@end
+
+@implementation CustomTableView
+- (id)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
+    if (self)
+    {
+        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        
+        _scrollBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+        [_scrollBar addGestureRecognizer:pan];
+        _scrollBar.alpha = 0.7;
+
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(6, 3, 34, 34)];
+        imageView.image = [UIImage imageNamed:@"scrollBar"];
+        [_scrollBar addSubview:imageView];
+        [self addSubview:_scrollBar];
+//        self.scrollBar.hidden = YES;
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    // 快速滚动条
+//    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+//    
+//    _scrollBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//    [_scrollBar addGestureRecognizer:pan];
+//    _scrollBar.alpha = 0.7;
+//    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(6, 3, 34, 34)];
+//    imageView.image = [UIImage imageNamed:@"scrollBar"];
+//    [_scrollBar addSubview:imageView];
+//    [self addSubview:_scrollBar];
+//    self.scrollBar.hidden = YES;
+}
+
+/* 识别拖动 */
+- (void)handlePan:(UIPanGestureRecognizer *)gestureRecognizer {
+    CGPoint location = [gestureRecognizer locationInView:self];
+    [self drawImageForGestureRecognizer:gestureRecognizer atPoint:location underAdditionalSituation:nil];
+    gestureRecognizer.view.center = CGPointMake(gestureRecognizer.view.center.x + location.x, gestureRecognizer.view.center.y + location.y);
+    [gestureRecognizer setTranslation:location inView:self];
+//    UITableView *tableView = _scrollTableViews[_currentPage%2];
+//    NSInteger count = [_dataSource[_currentPage] count];
+    int a = _count*location.y/self.frame.size.height;
+//    NSLog(@"location=%f",location.y);
+//    
+//    int a;
+//    if (_currentPage == 0 || _currentPage == 3) {
+//        a = count*(location.y-40)/(tableView.height-40);
+//    } else {
+//        a = count*(location.y-90)/(tableView.height-40);
+//    }
+//    
+//    //    CGFloat y = 90+(tableView.size.height-40)*path.section/count;
+//    NSIndexPath *index = [NSIndexPath indexPathForRow:0 inSection:a];//第a个区域里的第b行。
+//    if (a > 0 && a < count) {
+//        [tableView scrollToRowAtIndexPath:index atScrollPosition:UITableViewScrollPositionTop animated:NO];
+//    }
+//    
+    _isScrollBar = YES;
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded || gestureRecognizer.state == UIGestureRecognizerStateCancelled) {
+        [self performSelector:@selector(hideScrollBar) withObject:nil afterDelay:1.0];
+        
+        _isScrollBar = NO;
+    }
+    
+}
+
+- (void)hideScrollBar {
+    self.scrollBar.hidden = YES;
+}
+
+- (void)drawImageForGestureRecognizer:(UIGestureRecognizer *)recognizer
+                              atPoint:(CGPoint)centerPoint underAdditionalSituation:(NSString *)addtionalSituation{
+    
+    
+    if ([recognizer isMemberOfClass:[UIPanGestureRecognizer class]]) {
+        //    self.scrollBar.image = [UIImage imageNamed:imageName];
+        if (centerPoint.y > 0 && centerPoint.y < self.frame.size.height) {
+            //        self.scrollBar.center = centerPoint;
+            self.scrollBar.center = CGPointMake(kSceenWidth-20, centerPoint.y);
+        }
+
+    }
+    
+}
+
+
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    self.scrollBar.hidden = NO;
+    NSIndexPath *path =  [self indexPathForRowAtPoint:CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y)];
+    CGFloat y = (self.frame.size.height-40)*path.section/(_count-self.frame.size.height/65+1);
+
+    if (!_isScrollBar) {
+        self.scrollBar.center = CGPointMake(kSceenWidth-20, y);
+    }
+}
+
+// 滚动停止时，触发该函数
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    self.scrollBar.hidden = YES;
+}
+
+@end

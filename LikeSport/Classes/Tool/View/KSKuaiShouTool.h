@@ -1,0 +1,138 @@
+//
+//  KSLikeSportTool.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/4/7.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "KSHttpTool.h"
+
+#import "MJExtension.h"
+
+#import "KSLive.h"
+#import "WikiParam.h"
+
+
+typedef void (^Completed)(id result);
+
+typedef void (^Success)();
+
+typedef void (^Failure)();
+
+@interface KSKuaiShouTool : NSObject
+
+/**
+ *  获取全盘的赛事
+ */
++ (void)getLiveWithType:(NSInteger)type ofState:(NSString *)state withMatchID:(NSInteger)matchID WithCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取赛事更多事件
+ */
++ (void)getLiveMoreMatchID:(NSInteger)matchID WithCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取篮球变化
+ */
++ (void)getBasketballAndTennisLiveWithType:(NSInteger)type withFlagNum:(NSInteger)flayNum withCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取足球详情
+ */
++ (void)getFootballDetailWithMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取足球基本信息
+ */
++ (void)getFootballBaseType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure;
+
+
+/**
+ *  获取足球分析
+ */
++ (void)getAnalyseType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure;
+
+
+/**
+ *  关注接口
+ */
++ (void)forceMatchWithState:(NSInteger)state Type:(NSInteger)type withMatchID:(NSInteger)matchID  withCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  关注联赛
+ */
++ (void)followMatchWithState:(NSInteger)state Type:(NSInteger)type withMatchID:(NSInteger)matchID withToken:(NSString *)token withCompleted:(Completed)completed failure:(Failure)failure;
++ (void)followMatchWithParam:(NSDictionary *)param withCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取筛选
+ */
++ (void)getChooseType:(NSInteger)type withMDay:(NSString *)MDay withCompleted:(Completed)completed failure:(Failure)failure;
+@property (nonatomic, strong) NSString *language;
+
+
+// 赛程赛果
++ (void)getMatchWithType:(NSInteger)type ofState:(NSString *)state withMDay:(NSString *)MDay WithCompleted:(Completed)completed failure:(Failure)failure;
+
+// 用户登陆
++ (void)userLoginWithName:(NSString *)uname andPassword:(NSString *)password WithCompleted:(Completed)completed failure:(Failure)failure;
+
+// 用户信息请求
++ (void)getUserInfoWithToken:(NSString *)token withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 用户登陆
++ (void)userRegisterWithName:(NSString *)uname andPassword:(NSString *)password WithCompleted:(Completed)completed failure:(Failure)failure;
+
+// 第三方登陆
++ (void)userThirdLoginWithParams:(NSDictionary *)params WithCompleted:(Completed)completed failure:(Failure)failure;
+
+// 维基
++ (void)getWikiWithType:(NSInteger)type withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 维基提交
++ (void)wikiWithParam:(NSDictionary *)wikiParam withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 个人资料修改
++ (void)userInfoWithParam:(NSDictionary *)userParam withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 获取赛事类别关注列表
++ (void)getMatchListWithUserID:(NSString *)UserID withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 获取用户关注的球队列表
++ (void)getTeamListWithUserID:(NSString *)UserID withCompleted:(Completed)completed failure:(Failure)failure;
+
+/**
+ *  获取评论列表
+ */
++ (void)getCommentType:(NSInteger)type withMatchID:(NSInteger)matchID withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 评论提交
++ (void)commentWithType:(NSInteger)type withMid:(NSInteger)mid withReplyId:(NSInteger)replyId withContent:(NSString *)content withCompleted:(Completed)completed failure:(Failure)failure;
+
+
+// 删除评论
++ (void)deleteCommentWithId:(NSInteger)Id withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 设置信鸽状态
++ (void)settingXGWithState:(NSDictionary *)state withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 反馈提交
++ (void)feedback:(NSString *)feedback withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 上传头像
++ (void)updataAvatarWithImg:(UIImage *)img withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 搜索
++ (void)searchWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 搜索球队或联赛结果页
++ (void)teamWithUrl:(NSString *)url WithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 球队详情
++ (void)getTeamInfoWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure;
+
+// 球队赛程
++ (void)getTeamLeagueWithParams:(NSDictionary *)params withCompleted:(Completed)completed failure:(Failure)failure;
+@end

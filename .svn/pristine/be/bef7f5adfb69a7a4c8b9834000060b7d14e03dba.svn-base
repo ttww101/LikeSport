@@ -1,0 +1,26 @@
+//
+//  AppDelegate.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/3/28.
+//  Copyright © 2016年 likesport. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "LSMainViewController.h"
+#import "LSTabBarController.h"
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (nonatomic, strong) NSString *appLanguage;
+
+
+@property (strong, nonatomic) UIWindow *window;
+
+@property (nonatomic, strong) LSMainViewController *mainController;
+@property (nonatomic, strong) LSTabBarController *tabBarController;
+
+@property (nonatomic, strong) NSDictionary *pushInfo;
+
+
+@end
+

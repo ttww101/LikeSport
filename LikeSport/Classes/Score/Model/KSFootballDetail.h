@@ -1,0 +1,208 @@
+//
+//  KSFootballDetail.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/17.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@class FootballDetailResult,MatchZr,Elected,Substitute,MatchInfo,MatchEvent;
+@interface KSFootballDetail : NSObject
+
+@property (nonatomic, assign) NSInteger ret_code;
+
+@property (nonatomic, copy) NSString *err_msg;
+
+@property (nonatomic, strong) FootballDetailResult *result;
+
+@end
+@interface FootballDetailResult : NSObject
+
+@property (nonatomic, strong) NSArray<MatchEvent *> *match_event;
+
+@property (nonatomic, strong) MatchZr *match_zr;
+
+@property (nonatomic, strong) MatchInfo *match_info;
+
+@end
+
+@interface MatchZr : NSObject
+
+@property (nonatomic, strong) NSArray<Elected *> *elected;
+
+@property (nonatomic, strong) NSArray<Substitute *> *substitute;
+
+@end
+
+@interface Elected : NSObject
+
+@property (nonatomic, assign) NSInteger hplaynumber;
+
+@property (nonatomic, copy) NSString *hplayername;
+
+@property (nonatomic, copy) NSString *cplayername;
+
+@property (nonatomic, assign) NSInteger cplaynumber;
+
+@end
+
+@interface Substitute : NSObject
+
+@property (nonatomic, assign) NSInteger hplaynumber;
+
+@property (nonatomic, copy) NSString *hplayername;
+
+@property (nonatomic, copy) NSString *cplayername;
+
+@property (nonatomic, assign) NSInteger cplaynumber;
+
+@end
+
+@interface MatchInfo : NSObject
+
+@property (nonatomic, assign) NSInteger c_tqcgcs;
+
+@property (nonatomic, assign) NSInteger haspenalty;
+
+@property (nonatomic, assign) NSInteger h_ryq;
+
+@property (nonatomic, copy) NSString *jd_b1name;
+
+@property (nonatomic, assign) NSInteger firstgoal;
+
+@property (nonatomic, assign) NSInteger c_kqsjbl;
+
+@property (nonatomic, copy) NSString *jd_cxname;
+
+@property (nonatomic, assign) NSInteger penalty_c;
+
+@property (nonatomic, assign) NSInteger c_szmksc;
+
+@property (nonatomic, assign) NSInteger extratime_h;
+
+@property (nonatomic, assign) NSInteger h_smbd;
+
+@property (nonatomic, copy) NSString *jd_b2name;
+
+@property (nonatomic, assign) NSInteger h_tqcgcs;
+
+@property (nonatomic, assign) NSInteger hasextratime;
+
+@property (nonatomic, copy) NSString *jdname;
+
+@property (nonatomic, assign) NSInteger h_szcs;
+
+@property (nonatomic, assign) NSInteger c_zz;
+
+@property (nonatomic, assign) NSInteger penalty_h;
+
+@property (nonatomic, assign) NSInteger c_smbd;
+
+@property (nonatomic, assign) NSInteger firstred;
+
+@property (nonatomic, assign) NSInteger cjq;
+
+@property (nonatomic, assign) NSInteger h_kqsjbl;
+
+@property (nonatomic, assign) NSInteger h_zz;
+
+@property (nonatomic, assign) NSInteger h_smcs;
+
+@property (nonatomic, assign) NSInteger h_szmksc;
+
+@property (nonatomic, assign) NSInteger c_szcs;
+
+@property (nonatomic, assign) NSInteger h_smbz;
+
+@property (nonatomic, assign) NSInteger h_jqcs;
+
+@property (nonatomic, assign) NSInteger c_jwq;
+
+@property (nonatomic, assign) NSInteger extratime_c;
+
+@property (nonatomic, assign) NSInteger firstcore;
+
+@property (nonatomic, assign) NSInteger c_yw;
+
+@property (nonatomic, assign) NSInteger h_chanqcs;
+
+@property (nonatomic, assign) NSInteger c_smcs;
+
+@property (nonatomic, assign) NSInteger hjq;
+
+@property (nonatomic, assign) NSInteger firstyellow;
+
+@property (nonatomic, assign) NSInteger c_yp;
+
+@property (nonatomic, assign) NSInteger h_yw;
+
+@property (nonatomic, assign) NSInteger c_smbz;
+
+@property (nonatomic, assign) NSInteger c_jqcs;
+
+@property (nonatomic, assign) NSInteger h_grcs;
+
+@property (nonatomic, assign) NSInteger judge_id_cx;
+
+@property (nonatomic, assign) NSInteger h_tqcs;
+
+@property (nonatomic, assign) NSInteger h_yp;
+
+@property (nonatomic, assign) NSInteger hasjq;
+
+@property (nonatomic, assign) NSInteger c_cqcgcs;
+
+@property (nonatomic, assign) NSInteger h_jq_h;
+
+@property (nonatomic, assign) NSInteger c_jq;
+
+@property (nonatomic, assign) NSInteger judge_id_b1;
+
+@property (nonatomic, assign) NSInteger h_jwq;
+
+@property (nonatomic, assign) NSInteger h_cqcs;
+
+@property (nonatomic, assign) NSInteger c_ryq;
+
+@property (nonatomic, assign) NSInteger c_fg;
+
+@property (nonatomic, assign) NSInteger h_jq;
+
+@property (nonatomic, assign) NSInteger c_rp;
+
+@property (nonatomic, assign) NSInteger c_chanqcs;
+
+@property (nonatomic, assign) NSInteger c_grcs;
+
+@property (nonatomic, assign) NSInteger c_tqcs;
+
+@property (nonatomic, assign) NSInteger judge_id;
+
+@property (nonatomic, assign) NSInteger h_fg;
+
+@property (nonatomic, assign) NSInteger judge_id_b2;
+
+@property (nonatomic, assign) NSInteger c_jq_h;
+
+@property (nonatomic, assign) NSInteger h_rp;
+
+@property (nonatomic, assign) NSInteger c_cqcs;
+
+@property (nonatomic, assign) NSInteger h_cqcgcs;
+
+@end
+
+@interface MatchEvent : NSObject
+
+@property (nonatomic, copy) NSString *playername;
+
+@property (nonatomic, assign) NSInteger proctime;
+
+@property (nonatomic, copy) NSString *actiontype;
+
+@property (nonatomic, copy) NSString *teamtag;
+
+@end
+

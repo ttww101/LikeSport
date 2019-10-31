@@ -1,0 +1,64 @@
+//
+//  KSCommentFrame.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/7/12.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "KSCommentFrame.h"
+#import "Comment.h"
+#define CommentCellMargin 10
+#define NameFont [UIFont systemFontOfSize:13]
+
+@implementation KSCommentFrame
+
+- (void)setCommentResult:(CommentResult *)commentResult {
+    _commentResult = commentResult;
+    
+    // 计算评论frame
+    [self setUpCommentViewFrame];
+    
+    _cellHeight = CGRectGetMaxY(_timeFrame);
+}
+
+- (void)setUpCommentViewFrame {
+    // 头像
+    CGFloat imageX = CommentCellMargin;
+    CGFloat imageY = imageX;
+    CGFloat imageWH = 35;
+    _iconFrame = CGRectMake(imageX, imageY, imageWH, imageWH);
+    
+    // 国旗
+    CGFloat flagX = CGRectGetMaxX(_iconFrame) + CommentCellMargin;
+    CGFloat flagY = flagX;
+    CGSize flagSize = CGSizeMake(18, 12);
+    _flagFrame = (CGRect){{flagX,flagY},flagSize};
+    
+    // 昵称
+    CGFloat nameX = CGRectGetMaxX(_flagFrame) + CommentCellMargin;
+    CGFloat nameY = imageY;
+    CGSize nameSize = [_commentResult.nick_name sizeWithAttributes: @{NSFontAttributeName:NameFont}];
+    _nameFrame = (CGRect){{nameX,nameY},nameSize};
+    
+    CGFloat textX = flagX;
+    CGFloat textY = CGRectGetMaxY(_nameFrame) + CommentCellMargin;
+    CGFloat textW = kSceenWidth - 3 * CommentCellMargin - imageWH;
+    // 正文文字自适应
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    NSDictionary *attributes = @{NSFontAttributeName:NameFont, NSParagraphStyleAttributeName:paragraphStyle.copy};
+    CGSize textSize = [_commentResult.content boundingRectWithSize:CGSizeMake(textW, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:attributes context:nil].size;
+    //    CGSize textSize = [_status.text sizeWithFont:CZTextFont constrainedToSize:CGSizeMake(textW, MAXFLOAT)];
+    _textFrame = (CGRect){{textX,textY},textSize};
+    
+    // 昵称
+    CGFloat timeX = CGRectGetMaxX(_flagFrame) + CommentCellMargin;
+    CGFloat timeY = imageY;
+//    CGSize timeSize = [_commentResult.createTime sizeWithAttributes: @{NSFontAttributeName:NameFont}];
+    CGSize timeSize = CGSizeMake(80, 15);
+    _timeFrame = (CGRect){{timeX,timeY},timeSize};
+    
+    
+}
+@end

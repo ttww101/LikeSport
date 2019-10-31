@@ -1,0 +1,580 @@
+//
+//  CalendarViewController.m
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/6/14.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import "CalendarViewController.h"
+#import "SZCalendarPicker.h"
+#import "KSKuaiShouTool.h"
+#import "KSLiveFrame.h"
+#import "KSExpansionCell.h"
+#import "KSLiveCell.h"
+#import "KSChooseController.h"
+#import "FootballDetailController.h"
+#import "UWDatePickerView.h"
+
+@interface CalendarViewController ()<UITableViewDataSource, UITableViewDelegate,KSLiveCellDelegate ,ChooseDelegate,UWDatePickerViewDelegate>
+{
+    UWDatePickerView *_pickerView;
+}
+
+@property(nonatomic,assign)NSInteger type;
+@property (nonatomic, copy) NSString *date;
+
+
+@property (nonatomic, weak)UITableView *tableView;
+
+///@brife TableViews的数据源
+@property (strong, nonatomic) NSMutableArray *dataSource;
+@property (nonatomic, strong) NSMutableArray *basketballSource;
+@property (nonatomic, strong) NSMutableArray *footballSource;
+@property (nonatomic, strong) NSMutableArray *tennisSource;
+
+@property (nonatomic, strong) NSMutableArray<KSMore *> *more;
+
+@property (weak, nonatomic) UILabel *label;
+
+@property (assign, nonatomic) BOOL isExpand;
+@property (strong, nonatomic) NSIndexPath *selectedIndexPath;
+
+@property (nonatomic, assign) NSInteger chooseType;
+@property (nonatomic, assign) NSInteger ballChoose;
+@property (nonatomic, strong) NSMutableArray *chooseSource;
+@property (nonatomic, assign) BOOL isCalendar;
+
+@end
+
+@implementation CalendarViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self.tableView reloadData];
+
+    // Do any additional setup after loading the view.
+    [self initSegmentedControl];
+    
+    // 进入页面时打开日期选择器
+    [self setupDateView:DateTypeOfStart];
+    
+    UIButton *chooseButton = [[UIButton alloc] initWithFrame:CGRectMake(-10, 0, 30, 30)];
+    [chooseButton setImage:[UIImage imageNamed:@"choose"] forState:UIControlStateNormal];
+    [chooseButton addTarget:self action:@selector(didClickedChooseButton) forControlEvents:UIControlEventTouchUpInside];
+    //        [someButton setShowsTouchWhenHighlighted:YES];
+    UIBarButtonItem *chooseBtn =[[UIBarButtonItem alloc] initWithCustomView:chooseButton];
+    
+    UIButton *calendarButton = [[UIButton alloc] initWithFrame:CGRectMake(30, 0, 30, 30)];
+    [calendarButton setImage:[UIImage imageNamed:@"calendar"] forState:UIControlStateNormal];
+    [calendarButton addTarget:self action:@selector(setupDateView:) forControlEvents:UIControlEventTouchUpInside];
+    //        [someButton setShowsTouchWhenHighlighted:YES];
+    UIBarButtonItem *calendarBtn =[[UIBarButtonItem alloc] initWithCustomView:calendarButton];
+    NSArray *buttonArray = [[NSArray alloc]initWithObjects:chooseBtn,calendarBtn, nil];
+    self.navigationItem.rightBarButtonItems = buttonArray;
+
+
+}
+
+- (void)setData {
+    _dataSource = [NSMutableArray arrayWithCapacity:3];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    hud.userInteractionEnabled = NO;
+    
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        [self doSomeWork];
+    });
+    [KSKuaiShouTool getMatchWithType:_type ofState:@"all" withMDay:_date WithCompleted:^(id result) {
+        for (KSLive *live in result) {
+            KSLiveFrame *liveF = [[KSLiveFrame alloc] init];
+            live.type = _type;
+            live.isMatch = YES;
+            liveF.live = live;
+            [_dataSource addObject:liveF];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [hud hideAnimated:YES];
+
+            [self.tableView reloadData];
+        });
+    }failure:^(NSError *error) {
+        [hud hideAnimated:YES];
+        self.label.text = [error localizedDescription];
+        hud.label.text = [error localizedDescription];
+    }];
+}
+
+- (void)doSomeWork {
+    // Simulate by just waiting.
+    sleep(3.);
+}
+
+- (void)setupDateView:(DateType)type {
+    
+    _pickerView = [UWDatePickerView instanceDatePickerView];
+    _pickerView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+    [_pickerView setBackgroundColor:[UIColor clearColor]];
+    _pickerView.delegate = self;
+    _pickerView.type = type;
+    [self.navigationController.view addSubview:_pickerView];
+}
+
+- (void)getSelectDate:(NSString *)date type:(DateType)type {
+    NSLog(@"时间 : %@",date);
+
+    switch (type) {
+        case DateTypeOfStart:
+            // TODO 日期确定选择
+            _date = date;
+            [self setData];
+
+            break;
+            
+        case 1:
+            // TODO 日期取消选择
+            if (_dataSource.count == 0) {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            break;
+        default:
+            
+            break;
+    }
+}
+
+//- (void)didClickedCalendarButton {
+//    SZCalendarPicker *calendarPicker = [SZCalendarPicker showOnView:self.navigationController.view];
+//    calendarPicker.today = [NSDate date];
+//    calendarPicker.date = calendarPicker.today;
+//    calendarPicker.frame = CGRectMake(0, 100, self.view.frame.size.width, 352);
+//    
+//    calendarPicker.calendarBlock = ^(NSInteger day, NSInteger month, NSInteger year){
+//        
+//        // 将时间字符串转换成时间戳
+//        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+//        df.dateFormat  = @"yyyy-MM-dd";
+//        NSString *dateStr = [NSString stringWithFormat:@"%li-%li-%li",(long)year,(long)month,(long)day];
+//        NSDate *date = [df dateFromString:dateStr];
+//        NSString *timeSp = [NSString stringWithFormat:@"%ld", (long)[date timeIntervalSince1970]];
+//        _date = timeSp;
+//        [self setData];
+//    };
+//}
+
+
+
+- (void)didClickedChooseButton {
+    KSChooseController *chooseVc = [[KSChooseController alloc] init];
+    if (_type == 0 || _type == 1) {
+        //        KSLiveFrame *liveF = _footballSource[_currentPage][indexPath.section];
+        //        footballDetailVc.matchID = liveF.live.match_id;
+        //        footballDetailVc.type = type;
+        chooseVc.type = _type;
+        chooseVc.MDay = _date;
+        chooseVc.delegate = self;
+        [chooseVc setHidesBottomBarWhenPushed:YES];
+        [self.navigationController pushViewController:chooseVc animated:YES];
+    }
+}
+
+// 筛选后返回的数组
+- (void)chooseArray:(NSArray *)array chooseType:(NSInteger)chooseType type:(NSInteger)type {
+    _chooseSource = [array mutableCopy];
+    _chooseType = chooseType;
+    _ballChoose = type;
+    
+    [self conditionArray:array withData:_dataSource];
+    
+}
+
+- (void)conditionArray:(NSArray *)array withData:(NSArray *)data {
+    NSMutableArray *current = [NSMutableArray arrayWithCapacity:4];
+    
+    current = [NSMutableArray array];
+    if (data.count > 0) {
+        for (int j = 0; j < data.count; j++) {
+            KSLiveFrame *liveF = data[j];
+            //                if (i != 3) {
+            if (_chooseType == 1) { // 赛事筛选
+                for (int k = 0; k < array.count; k++) {
+                    //                        NSLog(@"%i----------%li",[array[k] intValue],(long)liveF.live.matchtype_id);
+                    if ([array[k] intValue] == liveF.live.matchtype_id) {
+                        [current addObject:liveF];
+                    }
+                }
+            } else if (_chooseType == 2) {
+                for (int k = 0; k < array.count; k++) {
+                    if ([array[k] intValue] == liveF.live.tregion_id) {
+                        [current addObject:liveF];
+                    }
+                }
+                
+            }
+        }
+    }
+    _dataSource = current;
+    
+    [self.tableView reloadData];
+}
+
+
+#pragma mark 体育分类选择
+- (void)initSegmentedControl
+{
+    UIImage *image1 = [UIImage imageNamed:@"football"];
+    UIImage *image2 = [UIImage imageNamed:@"basketball"];
+    UIImage *image3 = [UIImage imageNamed:@"tennisball"];
+    
+    NSArray *segmentedData = [[NSArray alloc] initWithObjects:image1,image2,image3, nil];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:segmentedData];
+    segmentedControl.frame = CGRectMake(10, (kSceenWidth-90)/2, 90, 30.0);
+    
+    //设置按下按钮时的颜色
+    segmentedControl.tintColor = [UIColor whiteColor];
+    segmentedControl.selectedSegmentIndex = 0;//默认选中的按钮索引
+    
+    //设置字体的大小和颜色
+    //    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:12],NSFontAttributeName,[UIColor colorWithRed:52/255.0 green:98/255.0 blue:147/255.0 alpha:1],NSForegroundColorAttributeName, nil];
+    //
+    //    [segmentedControl setTitleTextAttributes:attributes forState:UIControlStateNormal];
+    //
+    //
+    //    NSDictionary *highlightedAttributes = [NSDictionary dictionaryWithObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+    //    [segmentedControl setTitleTextAttributes:highlightedAttributes forState:UIControlStateHighlighted];
+    
+    //设置分段控件点击相应事件
+    [segmentedControl addTarget:self action:@selector(dosomethingInSegment:) forControlEvents:UIControlEventValueChanged];
+    [self.navigationItem setTitleView:segmentedControl];
+    
+}
+
+- (void)dosomethingInSegment:(UISegmentedControl *)seg
+{
+    NSInteger index = seg.selectedSegmentIndex;
+    
+    switch (index) {
+        case 0:
+            _type = 0;
+            [self setData];
+            break;
+            
+        case 1:
+            _type = 1;
+            [self setData];
+
+            break;
+            
+        case 2:
+            _type = 2;
+            [self setData];
+
+            break;
+            
+        default:
+            break;
+    }
+}
+
+#pragma mark - Table view  delegate & data source
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return _dataSource.count;
+    //    return 0;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    if (self.isExpand && self.selectedIndexPath.section == section) {
+        return 1 + 1; //多个数量
+    }
+    return 1;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //    KSLiveFrame *liveF = _dataSource[_currentPage][indexPath.section];
+    if (self.isExpand && self.selectedIndexPath.section == indexPath.section && indexPath.row != 0) {
+        
+        if (_type == 1) {
+            
+            return 150;
+        } else if (_type == 2) {
+            return 110;
+        } else {
+            return (_more.count + 1 ) * 20 + 5;
+        }
+    } else {
+        return 65;
+    }
+    
+}
+
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//    return 0;
+//}
+
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //    UITableViewCell *cell;
+    KSExpansionCell *expansionCell = [KSExpansionCell cellWithTableView:tableView];
+    KSLiveCell *cell = [KSLiveCell cellWithTableView:tableView];
+    if (self.isExpand && self.selectedIndexPath.section == indexPath.section && indexPath.row != 0) {     // Expand Cell
+        if (_type == 1 || _type == 2) {
+            KSLiveFrame *liveF = _dataSource[indexPath.section];
+            
+            expansionCell.liveF = liveF;
+            //        expansionCell.backgroundColor = [UIColor lightGrayColor];
+            //        cell = lcell;
+            return expansionCell;
+        } else {
+            KSExpansionCell *footballCell = [[KSExpansionCell alloc] init];
+            KSLiveFrame *liveF = _dataSource[indexPath.section];
+            NSLog(@"hteamname%@",liveF.live.hteamname);
+            footballCell.live = liveF.live;
+            footballCell.more = _more;
+            //            expansionCell.count = 1;
+            return footballCell;
+        }
+        
+    } else {    // Normal cell
+        
+        cell.delegate = self;
+    
+        KSLiveFrame *liveF = _dataSource[indexPath.section];
+        cell.liveF = liveF;
+        
+    }
+    
+    return cell;
+}
+
+
+
+#pragma mark 点击扩展
+- (void)moreTable:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"indexPath %ld-------%ld selectIndexPath",(long)indexPath.section,(long)self.selectedIndexPath.section);
+    if (!self.selectedIndexPath) {
+        [_more removeAllObjects];
+        if (_type == 0) {
+            // 请求足球进球数据
+            KSLiveFrame *liveF = _dataSource[indexPath.section];
+            
+            [KSKuaiShouTool getLiveMoreMatchID:liveF.live.match_id WithCompleted:^(id result) {
+                
+                _more = [result mutableCopy];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [self.tableView reloadData];
+                });
+            } failure:^(NSError *error) {
+                
+            }];
+            
+        }
+        
+        self.isExpand = YES;
+        self.selectedIndexPath = indexPath;
+        [tableView beginUpdates];
+        [tableView insertRowsAtIndexPaths:[self indexPathsForExpandSection:indexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+        [tableView endUpdates];
+        
+    } else {
+        if (self.isExpand) {
+            if (self.selectedIndexPath == indexPath) {
+                self.isExpand = NO;
+                [tableView beginUpdates];
+                [tableView deleteRowsAtIndexPaths:[self indexPathsForExpandSection:indexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView endUpdates];
+                self.selectedIndexPath = nil;
+            } else if (self.selectedIndexPath.row != indexPath.row && indexPath.section <= self.selectedIndexPath.section) {
+                // Select the expand cell, do the relating dealing.
+            }
+            //            else if (self.selectedIndexPath.section != indexPath.section){ // 展开时点击其他cell打开其他cell
+            
+            //                self.isExpand = NO;
+            //                [tableView beginUpdates];
+            //                [tableView deleteRowsAtIndexPaths:[self indexPathsForExpandSection:self.selectedIndexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+            //                [tableView endUpdates];
+            //                self.selectedIndexPath = nil;
+            //
+            //                self.selectedIndexPath = indexPath;
+            //                self.isExpand = YES;
+            //                [tableView beginUpdates];
+            //                [tableView insertRowsAtIndexPaths:[self indexPathsForExpandSection:indexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+            //                [tableView endUpdates];
+            //            }
+            else {
+                self.isExpand = NO;
+                [tableView beginUpdates];
+                [tableView deleteRowsAtIndexPaths:[self indexPathsForExpandSection:self.selectedIndexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView endUpdates];
+                self.selectedIndexPath = nil;
+            }
+        }
+    }
+}
+
+- (void)followTable:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath
+{
+    
+    NSLog(@"点击关注");
+    KSLiveFrame *liveF = _dataSource[indexPath.section];
+    NSLog(@"赛事类型%@  type%li id%li",liveF.live.matchtypefullname,(long)_type,(long)liveF.live.match_id);
+    NSInteger state;
+    if (liveF.live.is_follow == 0) {
+        state = 1;
+    } else if (liveF.live.is_follow == 1){
+        state = 2;
+    }
+    //    [_dataSource mutableCopy];
+    [KSKuaiShouTool forceMatchWithState:state Type:_type withMatchID:liveF.live.match_id withCompleted:^(id result) {
+        if ([result objectForKey:@"ret_code"] == 0) {
+            if (liveF.live.is_follow == 0) {
+                liveF.live.is_follow = 1;
+            } else if (liveF.live.is_follow == 1){
+                liveF.live.is_follow = 0;
+            }
+            
+        } else {
+            if (liveF.live.is_follow == 0) {
+                liveF.live.is_follow = 1;
+            } else if (liveF.live.is_follow == 1){
+                liveF.live.is_follow = 0;
+            }
+            //            switch (type) {
+            //                case 0:
+            //                    [_footballSource[_currentPage] mutableCopy];
+            //                    break;
+            //                case 1:
+            //                    [_basketballSource[_currentPage] mutableCopy];
+            //                    break;
+            //                case 2:
+            //                    [_tennisSource[_currentPage] mutableCopy];
+            //                    break;
+            //                default:
+            //                    break;
+            //            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }failure:^(NSError *error) {
+        
+    }];
+}
+
+
+
+- (NSArray *)indexPathsForExpandSection:(NSInteger)section {
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    for (int i = 1; i <= 1; i++) {
+        NSIndexPath *idxPth = [NSIndexPath indexPathForRow:i inSection:section];
+        [indexPaths addObject:idxPth];
+    }
+    return [indexPaths copy];
+}
+
+#pragma mark tabelView点击跳转
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (_type == 0 || _type == 1) {
+        KSLiveFrame *liveF = _dataSource[indexPath.section];
+        FootballDetailController *footballDetailVc = [[FootballDetailController alloc] init];
+        footballDetailVc.matchID = liveF.live.match_id;
+        footballDetailVc.type = _type;
+        if ([liveF.live.state isEqualToString:@"W"]) {
+            footballDetailVc.state = 1;
+        }
+        [footballDetailVc setHidesBottomBarWhenPushed:YES];
+        [self.navigationController pushViewController:footballDetailVc animated:YES];
+    }
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+}
+
+
+- (UITableView *)tableView {
+    if (!_tableView) {
+        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kSceenWidth, kSceenHeight-64) style:UITableViewStylePlain];
+        //        tableView.tableFooterView = [[UIView alloc] init];
+        tableView.delegate = self;
+        tableView.dataSource = self;
+        tableView.rowHeight = 100;
+        tableView.showsVerticalScrollIndicator = YES;
+        //没有内容时不显示分隔线
+        tableView.tableFooterView = [[UIView alloc] init];
+
+        [tableView registerClass:[KSLiveCell class] forCellReuseIdentifier:@"KSLiveCell"];
+        [tableView registerClass:[KSExpansionCell class] forCellReuseIdentifier:@"KSExpansionCell"];
+        //        _tableView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
+        
+        //        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kSceenWidth, 200)];
+        //        tableView.tableHeaderView = view;
+        [self.view addSubview:tableView];
+        _tableView = tableView;
+    }
+    return _tableView;
+}
+
+- (NSMutableArray *)dataSource {
+    if (!_dataSource) {
+        _dataSource = [@[] mutableCopy];
+    }
+    return _dataSource;
+}
+
+// 没有数据时显示label
+- (UILabel *)label {
+    if (!_label) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake((kSceenWidth-220)/2 , 70, 220, 40)];
+        label.text = @"暂无数据";
+        label.textAlignment = NSTextAlignmentCenter;
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        [self.view addSubview:label];
+        _label = label;
+    }
+    return _label;
+}
+
+// 分割线对齐左边
+-(void)viewDidLayoutSubviews
+{
+    UITableView *tableView = self.tableView;
+    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [tableView setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
+    }
+    
+    if ([tableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [tableView setLayoutMargins:UIEdgeInsetsMake(0,0,0,0)];
+    }
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

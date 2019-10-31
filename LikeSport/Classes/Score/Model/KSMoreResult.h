@@ -1,0 +1,18 @@
+//
+//  KSMoreResult.h
+//  LikeSport
+//
+//  Created by 罗剑玉 on 16/5/14.
+//  Copyright © 2016年 swordfish. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "MJExtension.h"
+
+@interface KSMoreResult : NSObject
+@property (nonatomic, copy) NSString *ret_total;
+
+@property (nonatomic, copy) NSString *ret_code;
+
+@property (nonatomic, strong) NSArray *result;
+@end

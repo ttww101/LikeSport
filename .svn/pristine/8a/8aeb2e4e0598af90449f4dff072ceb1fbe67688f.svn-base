@@ -1,0 +1,91 @@
+//
+//  PrefixHeader.pch
+//  WWeChat
+//
+//  Created by wordoor－z on 16/1/29.
+//  Copyright © 2016年 wzx. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+//按比例获取高度
+#define  WGiveHeight(HEIGHT) HEIGHT * [UIScreen mainScreen].bounds.size.height/568.0
+
+//按比例获取宽度
+#define  WGiveWidth(WIDTH) WIDTH * [UIScreen mainScreen].bounds.size.width/320.0
+
+//RGB色值
+#define UIColorFromRGB(rgbValue) [UIColor \
+colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
+green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \
+blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
+//本地缓存
+//userID
+#define wUserID @"wUserId"
+
+//user类
+#define wUserClass @"_User"
+
+//userinfo
+#define wUserInfo @"wUserInfo"
+
+#import "MBProgressHUD.h"
+#import "UIImageView+WebCache.h"
+
+// cell
+#define LSLiveCellMargin 5
+
+// 获取系统语言
+#define Language  ([[NSLocale preferredLanguages] objectAtIndex:0])
+
+//运动蓝
+//#define LSOrg [UIColor colorWithRed:249/255.0 green:160/255.0 blue:75/255.0 alpha:1]
+//#define LSGreen [UIColor colorWithRed:65/255.0 green:170/255.0 blue:157/255.0 alpha:1]
+//#define LSBlue [UIColor colorWithRed:44/255.0 green:86/255.0 blue:138/255.0 alpha:1]
+//#define LSBlue [UIColor colorWithRed:15/255.0 green:78/255.0 blue:131/255.0 alpha:1]
+#define LSBlue [UIColor colorWithRed:50/255.0 green:98/255.0 blue:149/255.0 alpha:1]
+//#define LSBlue [UIColor colorWithRed:50/255.0 green:97/255.0 blue:149/255.0 alpha:1]
+#define LSGray [UIColor colorWithRed:225/255.0 green:230/255.0 blue:236/255.0 alpha:1]
+#define LSYellow [UIColor colorWithRed:254/255.0 green:198/255.0 blue:22/255.0 alpha:1]
+#define LSBackgroundGray [UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1];
+#define LSFontBlue [UIColor colorWithRed:0/255.0 green:135/255.0 blue:230/255.0 alpha:1];
+
+//屏幕高
+#define kSceenHeight [UIScreen mainScreen].bounds.size.height
+//屏幕宽
+#define kSceenWidth [UIScreen mainScreen].bounds.size.width
+
+#define ShowAlert(title) {UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:title delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];[alert show];}
+
+#define kNotificationCenter         [NSNotificationCenter defaultCenter]
+
+#define OpenDrawer          @"leftdrawer_open"
+#define CloseDrawer         @"leftdrawer_close"
+#define ToggleDrawer        @"leftdrawer_toggle"
+#define NotiLogin           @"user_login"
+
+//非调试状态下NSLog不工作
+#ifndef __OPTIMIZE__
+#define NSLog(...) NSLog(__VA_ARGS__)
+#else
+#define NSLog(...) {}
+#endif
+
+//不显示当前时间戳
+#ifdef DEBUG
+//#define NSLog(FORMAT, ...) fprintf(stderr,"%s\n",[[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define NSLog(...)
+#endif
+
+//输出文件名和打印的具体行数
+#ifdef DEBUG
+//#define NSLog(FORMAT, ...) fprintf(stderr,"%s:%d\t%s\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define NSLog(...)
+#endif
+
+#endif /* PrefixHeader_pch */
+
